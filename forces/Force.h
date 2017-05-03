@@ -14,7 +14,10 @@ protected:
     bool active = true;
 
 public:
-    virtual void applyTo(std::vector<Particle*> particles) = 0;
+    virtual void setTarget(std::vector<Particle*> particles) = 0;
+    virtual void apply() = 0;
+    virtual void draw() = 0;
+
     void setActive(bool state);
     void toggle();
 

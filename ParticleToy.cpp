@@ -2,14 +2,18 @@
 //
 
 #include "Particle.h"
+#include "System.h"
+
 #include "forces/SpringForce.h"
+#include "forces/DirectionalForce.h"
+
+#include "solvers/Euler.h"
+
 #include "RodConstraint.h"
 #include "CircularWireConstraint.h"
+
 #include "imageio.h"
 
-#include <vector>
-#include <stdlib.h>
-#include <stdio.h>
 #if defined(_WIN32) || defined(WIN32)
 	#include <GL/glut.h>
 #else
@@ -17,9 +21,6 @@
 #endif
 
 /* macros */
-
-/* external definitions (from solver) */
-extern void simulation_step( std::vector<Particle*> pVector, float dt );
 
 /* global variables */
 
@@ -29,8 +30,6 @@ static int dsim;
 static int dump_frames;
 static int frame_number;
 
-// static Particle *pList;
-static std::vector<Particle*> pVector;
 
 static int win_id;
 static int win_x, win_y;
@@ -40,7 +39,7 @@ static int mouse_shiftclick[3];
 static int omx, omy, mx, my;
 static int hmx, hmy;
 
-static std::vector<SpringForce*> fVector;
+static System* sys = NULL;
 static RodConstraint * delete_this_dummy_rod = NULL;
 static CircularWireConstraint * delete_this_dummy_wire = NULL;
 
@@ -51,45 +50,28 @@ free/clear/allocate simulation data
 ----------------------------------------------------------------------
 */
 
-static void free_data ( void )
-{
-	pVector.clear();
-	fVector.clear();
-	if (delete_this_dummy_rod) {
-		delete delete_this_dummy_rod;
-		delete_this_dummy_rod = NULL;
-	}
-	if (delete_this_dummy_wire) {
-		delete delete_this_dummy_wire;
-		delete_this_dummy_wire = NULL;
-	}
-}
-
-static void clear_data ( void )
-{
-	for(int i=0; i < pVector.size(); i++){
-		pVector[i]->reset();
-	}
-}
-
 static void init_system(void)
 {
+    sys = new System(new Euler());
+
 	const double dist = 0.2;
-	const Vec2f center(0.0, 0.0);
-	const Vec2f offset(dist, 0.0);
+	const Vec3f center(0.0, 0.0, 0.0);
+	const Vec3f offset(dist, 0.0, 0.0);
 
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
 
-	pVector.push_back(new Particle(center + offset));
-	pVector.push_back(new Particle(center + offset + offset));
-	pVector.push_back(new Particle(center + offset + offset + offset));
-	
-	// You shoud replace these with a vector generalized forces and one of
+	sys->addParticle(new Particle(center + offset));
+    sys->addParticle(new Particle(center + offset + offset));
+    sys->addParticle(new Particle(center + offset + offset + offset));
+
+	// You should replace these with a vector generalized forces and one of
 	// constraints...
-	fVector.push_back(new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0));
-	delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
-	delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
+
+	delete_this_dummy_rod = new RodConstraint(sys->particles[1], sys->particles[2], dist);
+//	delete_this_dummy_wire = new CircularWireConstraint(sys->particles[0], center, dist);
 }
 
 /*
@@ -134,31 +116,6 @@ static void post_display ( void )
 	glutSwapBuffers ();
 }
 
-static void draw_particles ( void )
-{
-	for(int i=0; i < pVector.size(); i++)
-	{
-		pVector[i]->draw();
-	}
-}
-
-static void draw_forces ( void )
-{
-	for(int i=0; i < fVector.size(); i++)
-	{
-		fVector[i]->draw();
-	}
-}
-
-static void draw_constraints ( void )
-{
-	// change this to iteration over full set
-	if (delete_this_dummy_rod)
-		delete_this_dummy_rod->draw();
-	if (delete_this_dummy_wire)
-		delete_this_dummy_wire->draw();
-}
-
 /*
 ----------------------------------------------------------------------
 relates mouse movements to particle toy construction
@@ -198,11 +155,10 @@ static void get_from_UI ()
 
 static void remap_GUI()
 {
-	int ii, size = pVector.size();
-	for(ii=0; ii<size; ii++)
+	for(int i=0; i<sys->particles.size(); i++)
 	{
-		pVector[ii]->m_Position[0] = pVector[ii]->m_ConstructPos[0];
-		pVector[ii]->m_Position[1] = pVector[ii]->m_ConstructPos[1];
+        sys->particles[i]->position[0] = sys->particles[i]->startPos[0];
+        sys->particles[i]->position[1] = sys->particles[i]->startPos[1];
 	}
 }
 
@@ -218,7 +174,7 @@ static void key_func ( unsigned char key, int x, int y )
 	{
 	case 'c':
 	case 'C':
-		clear_data ();
+		sys->reset ();
 		break;
 
 	case 'd':
@@ -228,7 +184,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case 'q':
 	case 'Q':
-		free_data ();
+		sys->free ();
 		exit ( 0 );
 		break;
 
@@ -266,7 +222,7 @@ static void reshape_func ( int width, int height )
 
 static void idle_func ( void )
 {
-	if ( dsim ) simulation_step( pVector, dt );
+	if ( dsim ) sys->step(dt);
 	else        {get_from_UI();remap_GUI();}
 
 	glutSetWindow ( win_id );
@@ -277,9 +233,7 @@ static void display_func ( void )
 {
 	pre_display ();
 
-	draw_forces();
-	draw_constraints();
-	draw_particles();
+    sys->draw();
 
 	post_display ();
 }

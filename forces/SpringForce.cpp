@@ -12,21 +12,26 @@ SpringForce::SpringForce(Particle *p1, Particle * p2, double dist, double ks, do
 
 SpringForce::SpringForce(std::vector<Particle*> particles, double dist, double ks, double kd) : m_dist(dist), m_ks(ks), m_kd(kd)
 {
-    applyTo(particles);
+    setTarget(particles);
 }
 
 
-void SpringForce::applyTo(std::vector<Particle*> particles) {
+void SpringForce::setTarget(std::vector<Particle*> particles)
+{
     assert(particles.size() == 2);
     this->particles = particles;
+}
+
+void SpringForce::apply()
+{
 }
 
 void SpringForce::draw()
 {
   glBegin( GL_LINES );
   glColor3f(0.6, 0.7, 0.8);
-  glVertex2f( particles[0]->m_Position[0], particles[0]->m_Position[1] );
+  glVertex2f( particles[0]->position[0], particles[0]->position[1] );
   glColor3f(0.6, 0.7, 0.8);
-  glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
+  glVertex2f( particles[1]->position[0], particles[1]->position[1] );
   glEnd();
 }

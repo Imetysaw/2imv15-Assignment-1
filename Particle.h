@@ -1,18 +1,20 @@
 #pragma once
 
-#include <gfx/vec2.h>
+#include <gfx/vec3.h>
 
 class Particle
 {
 public:
 
-	Particle(const Vec2f & ConstructPos);
+	Particle(const Vec3f & startPosition);
 	virtual ~Particle(void);
 
 	void reset();
 	void draw();
 
-	Vec2f m_ConstructPos;
-	Vec2f m_Position;
-	Vec2f m_Velocity;
+	Vec3f startPos;
+	Vec3f position;
+	Vec3f force;
+	Vec3f velocity;
+    float mass;
 };

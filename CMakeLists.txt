@@ -45,9 +45,8 @@ set(SOURCE_FILES
         ParticleToy.cpp
         RodConstraint.cpp
         RodConstraint.h
-        Solver.cpp
         forces/SpringForce.cpp
-        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h)
+        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h System.cpp System.h solvers/Euler.cpp solvers/Euler.h solvers/Solver.h)
 
 
 add_executable(ParticleToy ${SOURCE_FILES})

@@ -6,9 +6,17 @@
 #define PARTICLETOY_DIRECTIONALFORCE_H
 
 #include "Force.h"
+#include "gfx/vec3.h"
 
-class DirectionalForce : Force {
+class DirectionalForce : public Force {
+public:
+    DirectionalForce(std::vector<Particle*> particles, Vec3f direction);
 
+    void setTarget(std::vector<Particle*> particles) override;
+    void apply() override;
+    void draw() override;
+private:
+    Vec3f direction;
 };
 
 

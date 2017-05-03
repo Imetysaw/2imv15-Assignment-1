@@ -34,8 +34,8 @@ set(SOURCE_FILES
         include/gfx/vec2.h
         include/gfx/vec3.h
         include/gfx/vec4.h
-        CircularWireConstraint.cpp
-        CircularWireConstraint.h
+        constraints/CircularWireConstraint.cpp
+        constraints/CircularWireConstraint.h
         imageio.cpp
         imageio.h
         linearSolver.cpp
@@ -43,10 +43,10 @@ set(SOURCE_FILES
         Particle.cpp
         Particle.h
         ParticleToy.cpp
-        RodConstraint.cpp
-        RodConstraint.h
+        constraints/RodConstraint.cpp
+        constraints/RodConstraint.h
         forces/SpringForce.cpp
-        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h System.cpp System.h solvers/Euler.cpp solvers/Euler.h solvers/Solver.h)
+        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h System.cpp System.h solvers/Euler.cpp solvers/Euler.h solvers/Solver.h constraints/Constraint.cpp constraints/Constraint.h)
 
 
 add_executable(ParticleToy ${SOURCE_FILES})

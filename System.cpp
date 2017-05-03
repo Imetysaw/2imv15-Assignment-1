@@ -17,12 +17,21 @@ void System::addParticle(Particle* p)
 }
 
 /**
- * Adds a force to apply to each particle when advancing a time step
- * @param f The new force to apply to the system
+ * Adds a force to use in the system when advancing a time step
+ * @param f The new force to use in the system
  */
 void System::addForce(Force* f)
 {
     forces.push_back(f);
+}
+
+/**
+ * Adds a constraint to use in the system when advancing a time step
+ * @param c The new constraint to use in the system
+ */
+void System::addConstraint(Constraint* c)
+{
+    constraints.push_back(c);
 }
 
 /**
@@ -109,20 +118,23 @@ void System::computeForces()
 
 void System::drawParticles()
 {
-    for(int i=0; i < particles.size(); i++)
+    for(Particle* p : particles)
     {
-        particles[i]->draw();
+        p->draw();
     }
 }
 
 void System::drawForces()
 {
-    for(int i=0; i < forces.size(); i++)
+    for(Force* f : forces)
     {
-        forces[i]->draw();
+        f->draw();
     }
 }
 
 void System::drawConstraints()
 {
+    for (Constraint* c : constraints) {
+        c->draw();
+    }
 }

@@ -6,6 +6,7 @@
 #define PARTICLETOY_SYSTEM_H
 
 #include "Particle.h"
+#include "constraints/Constraint.h"
 #include "forces/Force.h"
 
 typedef struct {
@@ -27,9 +28,11 @@ public:
 
     std::vector<Particle*> particles;
     std::vector<Force*> forces;
+    std::vector<Constraint*> constraints;
 
     void addParticle(Particle* p);
     void addForce(Force* f);
+    void addConstraint(Constraint* c);
     State getState();
     void setState(State s);
 

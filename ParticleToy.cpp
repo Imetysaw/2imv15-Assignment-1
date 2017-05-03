@@ -9,8 +9,8 @@
 
 #include "solvers/Euler.h"
 
-#include "RodConstraint.h"
-#include "CircularWireConstraint.h"
+#include "constraints/RodConstraint.h"
+#include "constraints/CircularWireConstraint.h"
 
 #include "imageio.h"
 
@@ -70,8 +70,8 @@ static void init_system(void)
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
 
-	delete_this_dummy_rod = new RodConstraint(sys->particles[1], sys->particles[2], dist);
-//	delete_this_dummy_wire = new CircularWireConstraint(sys->particles[0], center, dist);
+	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
 /*

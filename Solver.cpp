@@ -6,12 +6,12 @@
 #define RAND (((rand()%2000)/1000.f)-1.f)
 void simulation_step( std::vector<Particle*> pVector, float dt )
 {
-	int ii, size = pVector.size();
+	size_t size = pVector.size();
 	
-	for(ii=0; ii<size; ii++)
+	for(int i=0; i < size; i++)
 	{
-		pVector[ii]->m_Position += dt*pVector[ii]->m_Velocity;
-		pVector[ii]->m_Velocity = DAMP*pVector[ii]->m_Velocity + Vec2f(RAND,RAND) * 0.005;
+		pVector[i]->m_Position += dt*pVector[i]->m_Velocity;
+		pVector[i]->m_Velocity = DAMP*pVector[i]->m_Velocity + Vec2f(RAND,RAND) * 0.005;
 	}
 
 }

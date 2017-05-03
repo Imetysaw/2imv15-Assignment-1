@@ -1,5 +1,10 @@
 #include "CircularWireConstraint.h"
+
+#ifdef __CYGWIN__
+#include <GL/glut.h>
+#else
 #include <GLUT/glut.h>
+#endif
 
 #define PI 3.1415926535897932384626433832795
 

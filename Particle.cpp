@@ -1,8 +1,9 @@
 #include "Particle.h"
-#if defined(_WIN32) || defined(WIN32)
-    #include <GL/glut.h>
+
+#ifdef __CYGWIN__
+	#include <GL/glut.h>
 #else
-    #include <GLUT/glut.h>
+	#include <GLUT/glut.h>
 #endif
 
 Particle::Particle(const Vec2f & ConstructPos) :

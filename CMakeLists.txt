@@ -46,8 +46,8 @@ set(SOURCE_FILES
         RodConstraint.cpp
         RodConstraint.h
         Solver.cpp
-        SpringForce.cpp
-        SpringForce.h)
+        forces/SpringForce.cpp
+        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h)
 
 
 add_executable(ParticleToy ${SOURCE_FILES})

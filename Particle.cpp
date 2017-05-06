@@ -30,4 +30,17 @@ void Particle::draw()
 	glVertex2f(position[0]+h/2.0, position[1]+h/2.0);
 	glVertex2f(position[0]-h/2.0, position[1]+h/2.0);
 	glEnd();
+
+
+    glColor3f(0.0, 0.7, 0.0);
+    glBegin(GL_LINES);
+    glVertex3f(position[0], position[1], position[2]);
+    glVertex3f(position[0] + velocity[0], position[1] + velocity[1], position[2] + velocity[2]);
+    glEnd();
+
+    glColor3f(0.0, 0.6, 0.6);
+    glBegin(GL_LINES);
+    glVertex3f(position[0], position[1], position[2]);
+    glVertex3f(position[0] + force[0], position[1] + force[1], position[2] + force[2]);
+    glEnd();
 }

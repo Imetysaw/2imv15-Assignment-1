@@ -4,19 +4,23 @@
 
 #include "Euler.h"
 #include "../System.h"
+#include "ConstraintSolver.h"
 
-void Euler::simulation_step(System* system, float dt)
+void Euler::simulateStep(System* system, float dt)
 {
     std::vector<float> delta;
 
-    // Clear the system of accumulated forces
+    // 1. Clear the system of accumulated forces
     system->clearForces();
+
+    // 2. Compute the forces
     system->computeForces();
 
-    // Get the current system state
-    State s = system->getState();
+    // 3. Compute constraint forces
+    ConstraintSolver::solve(system, 60.0f, 50.0f);
 
-    // Compute the derivative and scale it based on dt
+    // 4. Compute the derivative and scale it based on dt based on the current state
+    State s = system->getState();
     computeDerivative(s, delta);
     scale(delta, dt);
 

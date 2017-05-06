@@ -69,7 +69,7 @@ void System::draw()
  */
 void System::step(float dt)
 {
-    solver->simulation_step(this, dt);
+    solver->simulateStep(this, dt);
     time += dt;
 }
 
@@ -112,7 +112,6 @@ void System::computeForces()
         f->apply();
     }
 }
-
 
 /// Private ///
 

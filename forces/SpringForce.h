@@ -13,6 +13,6 @@ public:
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
 private:
-    double const m_dist;     // rest length
-    double const m_ks, m_kd; // spring strength constants
+    double const dist;     // rest length
+    double const ks, kd; // spring strength constants
 };

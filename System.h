@@ -37,6 +37,7 @@ public:
     void setState(State s);
 
     void computeForces();
+    void computeConstraints();
     void clearForces();
 
     void step(float dt);

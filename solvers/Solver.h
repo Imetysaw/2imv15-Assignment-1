@@ -10,7 +10,7 @@
 class System;
 class Solver {
 public:
-    virtual void simulation_step(System* sys, float dt) = 0;
+    virtual void simulateStep(System* sys, float dt) = 0;
 };
 
 

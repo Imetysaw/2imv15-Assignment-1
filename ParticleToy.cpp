@@ -13,6 +13,7 @@
 #include "constraints/CircularWireConstraint.h"
 
 #include "imageio.h"
+#include "forces/DragForce.h"
 
 #if defined(_WIN32) || defined(WIN32)
 	#include <GL/glut.h>
@@ -70,8 +71,74 @@ static void init_system(void)
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
 
-	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
+//	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
+	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist, {0}));
+}
+
+static void init_newSystem(void) {
+	sys = new System(new Euler());
+
+	const float dist = 0.2;
+	const Vec3f center(0.0, 0.0, 0.0);
+	const Vec3f offset(dist, 0.0, 0.0);
+
+	// Create three particles, attach them to each other, then add a
+	// circular wire constraint to both
+
+	sys->addParticle(new Particle(center - offset));
+	sys->addParticle(new Particle(center));
+	sys->addParticle(new Particle(center + offset));
+
+	// You should replace these with a vector generalized forces and one of
+	// constraints...
+    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 3.0, 3.0));
+    sys->addForce(new SpringForce(sys->particles[1], sys->particles[2], dist, 1.0, 1.0));
+
+    // Add gravity and drag to all particles
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
+    sys->addForce(new DragForce(sys->particles, 0.2));
+
+//    sys->addConstraint(new RodConstraint(sys->particles[0], sys->particles[1], dist * 2, {0,1}));
+//    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist * 2, {1,2}));
+
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center - offset - offset, dist, {0}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[2], center + offset + offset, dist, {2}));
+}
+
+static void init_cloth(void) {
+    sys = new System(new Euler());
+
+    const int gSize = 8;
+
+    // Initialize particles
+    for (float x = -0.5f; x < 0.5f; x += 1.0f / gSize) {
+        for (float y = 0.5f; y > -0.5f; y -= 1.0f / gSize) {
+            sys->addParticle(new Particle(Vec3f(x, y, 0.0f)));
+        }
+    }
+
+    // Add gravity and drag to all particles
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.02, 0)));
+    sys->addForce(new DragForce(sys->particles, 0.5));
+
+    for (int x = 0; x < gSize - 1; x++) {
+        for (int y = 0; y < gSize; y++) {
+            sys->addForce(new SpringForce(sys->particles[x + y * gSize],
+                                          sys->particles[x + 1 + y * gSize],
+                                          1.0f / gSize, 1.0, 1.0));
+        }
+    }
+
+    for (int x = 0; x < gSize; x++) {
+        for (int y = 0; y < gSize - 1; y++) {
+            sys->addForce(new SpringForce(sys->particles[x + y * gSize],
+                                          sys->particles[x + (y + 1) * gSize],
+                                          0.8f / gSize, 3.0, 3.0));
+        }
+    }
+
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], Vec3f(-0.5f, 0.6f, 0), 0.1f, {0}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[gSize*gSize - gSize], Vec3f(0.5f, 0.6f, 0), 0.1f, {gSize*gSize-gSize}));
 }
 
 /*
@@ -172,11 +239,6 @@ static void key_func ( unsigned char key, int x, int y )
 {
 	switch ( key )
 	{
-	case 'c':
-	case 'C':
-		sys->reset ();
-		break;
-
 	case 'd':
 	case 'D':
 		dump_frames = !dump_frames;
@@ -190,6 +252,8 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case ' ':
 		dsim = !dsim;
+        if(dsim)
+            sys->reset ();
 		break;
 	}
 }
@@ -303,8 +367,8 @@ int main ( int argc, char ** argv )
 	dsim = 0;
 	dump_frames = 0;
 	frame_number = 0;
-	
-	init_system();
+
+    init_cloth();
 	
 	win_x = 512;
 	win_y = 512;

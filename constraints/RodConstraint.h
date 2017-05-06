@@ -4,14 +4,18 @@
 #include "Constraint.h"
 
 class RodConstraint : public Constraint{
- public:
-  RodConstraint(Particle *p1, Particle * p2, double dist);
+public:
+    RodConstraint(Particle *p1, Particle * p2, float dist, vector<int> indices);
 
-  void draw() override;
+    void draw() override;
+
+    float C() override;
+    float Cd() override;
+    vector<Vec3f> j() override;
+    vector<Vec3f> jd() override;
 
  private:
-
-  Particle * const m_p1;
-  Particle * const m_p2;
-  double const m_dist;
+  Particle * const p1;
+  Particle * const p2;
+  float const dist;
 };

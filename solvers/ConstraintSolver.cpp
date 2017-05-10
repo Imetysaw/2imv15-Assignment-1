@@ -10,7 +10,7 @@ using namespace std;
 
 vector<vector<float>> mult(vector<vector<float>> m1,
                            vector<vector<float>> m2) {
-    u_long r1 = m1.size(), r2 = m2.size(), c1 = m1[0].size(), c2 = m2[0].size();
+    unsigned long r1 = m1.size(), r2 = m2.size(), c1 = m1[0].size(), c2 = m2[0].size();
     assert(c1 == r2);
 
     vector<vector<float>> r = vector<vector<float>>(r1, vector<float>(c2));
@@ -77,7 +77,7 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     int dimensions = 3;
 
     // calculate vector sizes containing particles
-    u_long pSize = particles.size() * dimensions;
+    unsigned long pSize = particles.size() * dimensions;
 
     // Define vectors and matrices with the correct sizes
     vector<float> qd = vector<float>(pSize);
@@ -96,7 +96,7 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
         }
     }
 
-    u_long cSize = constraints.size();
+    unsigned long cSize = constraints.size();
 
     // Instantiate vector and matrices
     vector<float> C = vector<float>();

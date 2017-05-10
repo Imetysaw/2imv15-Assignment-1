@@ -1,6 +1,6 @@
 #include "SpringForce.h"
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(WIN32)
   #include <GL/glut.h>
 #else
   #include <GLUT/glut.h>

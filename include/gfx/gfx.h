@@ -31,7 +31,7 @@
 // same things in their header files.  We try to compensate here.
 //
 
-#if !defined(HAVE_BOOL)
+#if !defined(HAVE_BOOL) && !defined(WIN32)
 typedef int bool;
 const bool false = 0;
 const bool true = 1;

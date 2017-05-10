@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS})
 LINK_LIBRARIES(${OPENGL_LIBRARIES})
 
 
-add_subdirectory(lib/nanogui)
 include_directories(lib/nanogui/include)
 include_directories(${NANOGUI_EXTRA_INCS})
 add_definitions(${NANOGUI_EXTRA_DEFS})

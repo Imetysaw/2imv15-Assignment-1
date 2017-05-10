@@ -11,12 +11,6 @@
 class Euler : public Solver {
 public:
     void simulateStep(System* system, float dt) override;
-
-private:
-    void computeDerivative(State s, std::vector<float> &dst);
-    void scale(std::vector<float> &src, float dt);
-    void updateState(State s, std::vector<float> &src);
-
 };
 
 

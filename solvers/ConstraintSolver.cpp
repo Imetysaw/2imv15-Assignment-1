@@ -142,19 +142,17 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     vector<float> KdCd = mult(Cd, Kd);
 
     // Compute JWJ^T lambda
-    vector<float> JWJtL = sub(sub(sub(Jdqd, JWQ), KsC), KdCd);
+    vector<float> tmp = sub(sub(sub(Jdqd, JWQ), KsC), KdCd);
+    vector<double> JWJtL(tmp.begin(), tmp.end());
 
+    implicitMatrix *mtx = new implicitMatrix(&JWJt);
 
-    double JWJtLD[JWJtL.size()];
-    std::copy(JWJtL.begin(), JWJtL.end(), JWJtLD);
-
-
-    implicitMatrix *mtx = new implicitMatrix(&JWJt);;
     double l[constraints.size()];
 
     int numSteps = 1000;
 
-    ConjGrad(constraints.size(), mtx, l, JWJtLD, 1.0f / 1000.0f, &numSteps);
+    ConjGrad(constraints.size(), mtx, l, &JWJtL[0], 0.00001f, &numSteps);
+    printf("Used %i steps", numSteps);
 
     std::vector< float > lambda(l, l + sizeof l / sizeof l[0]);
 

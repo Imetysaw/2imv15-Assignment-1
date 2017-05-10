@@ -74,8 +74,8 @@ double ConjGrad(int n, implicitMatrix *A, double x[], double b[],
       u = vecDot(n, d, t);
       
       if (u == 0) {
-	printf("(SolveConjGrad) d'Ad = 0\n");
-	break;
+        printf("(SolveConjGrad) d'Ad = 0\n");
+        break;
       }
       
       // How far should we go?

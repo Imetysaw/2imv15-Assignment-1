@@ -40,6 +40,8 @@ static int mouse_shiftclick[3];
 static int omx, omy, mx, my;
 static int hmx, hmy;
 
+static float camAngle = 0;
+
 static System* sys = NULL;
 static RodConstraint * delete_this_dummy_rod = NULL;
 static CircularWireConstraint * delete_this_dummy_wire = NULL;
@@ -55,77 +57,48 @@ static void init_system(void)
 {
     sys = new System(new Euler());
 
-	const double dist = 0.2;
+	const float dist = 0.2f;
 	const Vec3f center(0.0, 0.0, 0.0);
 	const Vec3f offset(dist, 0.0, 0.0);
 
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
 
-	sys->addParticle(new Particle(center + offset));
-    sys->addParticle(new Particle(center + offset + offset));
-    sys->addParticle(new Particle(center + offset + offset + offset));
+	sys->addParticle(new Particle(center + offset, 1.0f));
+    sys->addParticle(new Particle(center + offset + offset, 1.0f));
+    sys->addParticle(new Particle(center + offset + offset + offset, 1.0f));
 
 	// You should replace these with a vector generalized forces and one of
 	// constraints...
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981f, 0)));
 
 //	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
 	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist, {0}));
 }
 
-static void init_newSystem(void) {
-	sys = new System(new Euler());
-
-	const float dist = 0.2;
-	const Vec3f center(0.0, 0.0, 0.0);
-	const Vec3f offset(dist, 0.0, 0.0);
-
-	// Create three particles, attach them to each other, then add a
-	// circular wire constraint to both
-
-	sys->addParticle(new Particle(center - offset));
-	sys->addParticle(new Particle(center));
-	sys->addParticle(new Particle(center + offset));
-
-	// You should replace these with a vector generalized forces and one of
-	// constraints...
-    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 3.0, 3.0));
-    sys->addForce(new SpringForce(sys->particles[1], sys->particles[2], dist, 1.0, 1.0));
-
-    // Add gravity and drag to all particles
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981, 0)));
-    sys->addForce(new DragForce(sys->particles, 0.2));
-
-//    sys->addConstraint(new RodConstraint(sys->particles[0], sys->particles[1], dist * 2, {0,1}));
-//    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist * 2, {1,2}));
-
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center - offset - offset, dist, {0}));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[2], center + offset + offset, dist, {2}));
-}
-
 static void init_cloth(void) {
     sys = new System(new Euler());
 
-    const int gSize = 8;
+    const int gSize = 12;
 
     // Initialize particles
     for (float x = -0.5f; x < 0.5f; x += 1.0f / gSize) {
         for (float y = 0.5f; y > -0.5f; y -= 1.0f / gSize) {
-            sys->addParticle(new Particle(Vec3f(x, y, 0.0f)));
+            sys->addParticle(new Particle(Vec3f(x, y, 0.0f), 0.5f));
         }
     }
 
     // Add gravity and drag to all particles
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.02, 0)));
-    sys->addForce(new DragForce(sys->particles, 0.5));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.005f)));
+    sys->addForce(new DragForce(sys->particles, 0.2f));
 
     for (int x = 0; x < gSize - 1; x++) {
         for (int y = 0; y < gSize; y++) {
             sys->addForce(new SpringForce(sys->particles[x + y * gSize],
                                           sys->particles[x + 1 + y * gSize],
-                                          1.0f / gSize, 1.0, 1.0));
+                                          1.0f / gSize, 0.6, 0.5));
         }
     }
 
@@ -133,12 +106,30 @@ static void init_cloth(void) {
         for (int y = 0; y < gSize - 1; y++) {
             sys->addForce(new SpringForce(sys->particles[x + y * gSize],
                                           sys->particles[x + (y + 1) * gSize],
-                                          0.8f / gSize, 3.0, 3.0));
+                                          1.0f / gSize, 0.6, 0.5));
+        }
+    }
+
+    for (int x = 0; x < gSize - 1; x++) {
+        for (int y = 0; y < gSize - 1; y++) {
+            sys->addForce(new SpringForce(sys->particles[x + y * gSize],
+                                          sys->particles[x + 1 + (y + 1) * gSize],
+                                          sqrt(2 * pow(1.0f / gSize, 2)), 1.0, 0.5));
+        }
+    }
+
+
+
+    for (int x = 0; x < gSize - 1; x++) {
+        for (int y = 1; y < gSize; y++) {
+            sys->addForce(new SpringForce(sys->particles[x + y * gSize],
+                                          sys->particles[x + 1 + (y - 1) * gSize],
+                                          sqrt(2 * pow(1.0f / gSize, 2)), 1.0, 0.5));
         }
     }
 
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], Vec3f(-0.5f, 0.6f, 0), 0.1f, {0}));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[gSize*gSize - gSize], Vec3f(0.5f, 0.6f, 0), 0.1f, {gSize*gSize-gSize}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[gSize*gSize - gSize], Vec3f(0.45f, 0.6f, 0), 0.1f, {gSize*gSize-gSize}));
 }
 
 /*
@@ -149,12 +140,13 @@ OpenGL specific drawing routines
 
 static void pre_display ( void )
 {
-	glViewport ( 0, 0, win_x, win_y );
-	glMatrixMode ( GL_PROJECTION );
+    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode ( GL_MODELVIEW );
 	glLoadIdentity ();
-	gluOrtho2D ( -1.0, 1.0, -1.0, 1.0 );
-	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
-	glClear ( GL_COLOR_BUFFER_BIT );
+    glTranslatef(0.0f, 0.0f, -4.0f);
+    glRotatef(20, 1.0f, 0.0f, 0.0f);
+    glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
+    camAngle+=0.5f;
 }
 
 static void post_display ( void )
@@ -226,6 +218,7 @@ static void remap_GUI()
 	{
         sys->particles[i]->position[0] = sys->particles[i]->startPos[0];
         sys->particles[i]->position[1] = sys->particles[i]->startPos[1];
+        sys->particles[i]->position[2] = sys->particles[i]->startPos[2];
 	}
 }
 
@@ -277,8 +270,18 @@ static void motion_func ( int x, int y )
 
 static void reshape_func ( int width, int height )
 {
-	glutSetWindow ( win_id );
-	glutReshapeWindow ( width, height );
+    if (height == 0) height = 1;
+    GLfloat aspect = (GLfloat)width / (GLfloat)height;
+
+//	glutSetWindow ( win_id );
+//	glutReshapeWindow ( width, height );
+
+    glViewport(0, 0, width, height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 
 	win_x = width;
 	win_y = height;
@@ -317,14 +320,19 @@ static void open_glut_window ( void )
 	glutInitWindowSize ( win_x, win_y );
 	win_id = glutCreateWindow ( "Particletoys!" );
 
-	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
-	glClear ( GL_COLOR_BUFFER_BIT );
-	glutSwapBuffers ();
-	glClear ( GL_COLOR_BUFFER_BIT );
-	glutSwapBuffers ();
-
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POLYGON_SMOOTH);
+	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClearDepth(1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glShadeModel(GL_SMOOTH);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+//	glClear ( GL_COLOR_BUFFER_BIT );
+//	glutSwapBuffers ();
+//	glClear ( GL_COLOR_BUFFER_BIT );
+//	glutSwapBuffers ();
+//
+//	glEnable(GL_LINE_SMOOTH);
+//	glEnable(GL_POLYGON_SMOOTH);
 
 	pre_display ();
 
@@ -368,7 +376,7 @@ int main ( int argc, char ** argv )
 	dump_frames = 0;
 	frame_number = 0;
 
-    init_cloth();
+    init_system();
 	
 	win_x = 512;
 	win_y = 512;

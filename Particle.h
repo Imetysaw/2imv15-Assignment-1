@@ -6,7 +6,7 @@ class Particle
 {
 public:
 
-	Particle(const Vec3f & startPosition);
+	Particle(const Vec3f & startPosition, float mass);
 	virtual ~Particle(void);
 
 	void reset();

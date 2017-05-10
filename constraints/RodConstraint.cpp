@@ -46,8 +46,8 @@ void RodConstraint::draw()
 {
   glBegin( GL_LINES );
   glColor3f(0.8, 0.7, 0.6);
-  glVertex2f( p1->position[0], p1->position[1] );
+  glVertex3f( p1->position[0], p1->position[1], p1->position[2] );
   glColor3f(0.8, 0.7, 0.6);
-  glVertex2f( p2->position[0], p2->position[1] );
+  glVertex3f( p2->position[0], p2->position[1], p2->position[2] );
   glEnd();
 }

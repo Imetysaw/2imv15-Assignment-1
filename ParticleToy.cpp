@@ -15,6 +15,8 @@
 #include "imageio.h"
 #include "forces/DragForce.h"
 
+#include "nanogui/screen.h"
+
 #if defined(_WIN32) || defined(WIN32)
 	#include <GL/glut.h>
 #else
@@ -91,8 +93,8 @@ static void init_cloth(void) {
 
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.005f)));
-    sys->addForce(new DragForce(sys->particles, 0.2f));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.05f)));
+    sys->addForce(new DragForce(sys->particles, 0.6f));
 
     for (int x = 0; x < gSize - 1; x++) {
         for (int y = 0; y < gSize; y++) {
@@ -376,7 +378,7 @@ int main ( int argc, char ** argv )
 	dump_frames = 0;
 	frame_number = 0;
 
-    init_system();
+    init_cloth();
 	
 	win_x = 512;
 	win_y = 512;

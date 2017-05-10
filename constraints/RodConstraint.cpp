@@ -13,14 +13,14 @@ RodConstraint::RodConstraint(Particle *p1, Particle * p2, float dist, vector<int
 float RodConstraint::C() {
   Vec3f delta = p1->position - p2->position;
 
-  return delta[0] * delta[0] + delta[1] * delta[1] + delta[2] * delta[2] - dist * dist;
+  return delta * delta - dist * dist;
 }
 
 float RodConstraint::Cd() {
     Vec3f pDiff = (p1->position - p2->position) * 2;
     Vec3f vDiff = (p1->velocity - p2->velocity) * 2;
 
-    return pDiff[0] * vDiff[0] + pDiff[1] * vDiff[1] +  pDiff[2] * vDiff[2];
+    return pDiff * vDiff;
 }
 
 std::vector<Vec3f> RodConstraint::j() {

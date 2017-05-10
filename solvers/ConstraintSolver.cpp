@@ -142,12 +142,11 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     vector<float> KdCd = mult(Cd, Kd);
 
     // Compute JWJ^T lambda
-    vector<float> tmp = sub(sub(sub(Jdqd, JWQ), KsC), KdCd);
-    vector<double> JWJtL(tmp.begin(), tmp.end());
+    vector<float> JWJtL = sub(sub(sub(Jdqd, JWQ), KsC), KdCd);
 
     implicitMatrix *mtx = new implicitMatrix(&JWJt);
 
-    double l[constraints.size()];
+    float l[constraints.size()];
 
     int numSteps = 1000;
 

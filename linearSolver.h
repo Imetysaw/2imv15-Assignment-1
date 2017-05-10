@@ -21,7 +21,7 @@ class implicitMatrix
 		m = matrix;
 	}
 
-	virtual void matVecMult(double x[], double r[]) {
+	virtual void matVecMult(float x[], float r[]) {
 		for (int i = 0; i < m->size(); i++) {
 			int res = 0;
 
@@ -55,16 +55,16 @@ private:
 // "epsilon" is the error tolerance
 // "steps", as passed, is the maximum number of steps, or 0 (implying MAX_STEPS)
 // Upon completion, "steps" contains the number of iterations taken
-double ConjGrad(int n, implicitMatrix *A, double x[], double b[], 
+double ConjGrad(int n, implicitMatrix *A, float x[], float b[],
 		double epsilon,	// how low should we go?
 		int    *steps);
 
 // Some vector helper functions
-void vecAddEqual(int n, double r[], double v[]);
-void vecDiffEqual(int n, double r[], double v[]);
-void vecAssign(int n, double v1[], double v2[]);
-void vecTimesScalar(int n, double v[], double s);
-double vecDot(int n, double v1[], double v2[]);
-double vecSqrLen(int n, double v[]);
+void vecAddEqual(int n, float r[], float v[]);
+void vecDiffEqual(int n, float r[], float v[]);
+void vecAssign(int n, float v1[], float v2[]);
+void vecTimesScalar(int n, float v[], float s);
+double vecDot(int n, float v1[], float v2[]);
+double vecSqrLen(int n, float v[]);
 
 #endif

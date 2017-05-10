@@ -2,31 +2,31 @@
 
 // vector helper functions
 
-void vecAddEqual(int n, double r[], double v[])
+void vecAddEqual(int n, float r[], float v[])
 {
   for (int i = 0; i < n; i++)
     r[i] = r[i] + v[i];
 }
 
-void vecDiffEqual(int n, double r[], double v[])
+void vecDiffEqual(int n, float r[], float v[])
 {
   for (int i = 0; i < n; i++)
     r[i] = r[i] - v[i];
 }
 
-void vecAssign(int n, double v1[], double v2[])
+void vecAssign(int n, float v1[], float v2[])
 {
   for (int i = 0; i < n; i++)
     v1[i] = v2[i];
 }
 
-void vecTimesScalar(int n, double v[], double s)
+void vecTimesScalar(int n, float v[], float s)
 {
   for (int i = 0; i < n; i++)
     v[i] *= s;
 }
 
-double vecDot(int n, double v1[], double v2[])
+double vecDot(int n, float v1[], float v2[])
 {
   double dot = 0;
   for (int i = 0; i < n; i++)
@@ -34,22 +34,22 @@ double vecDot(int n, double v1[], double v2[])
   return dot;
 }
 
-double vecSqrLen(int n, double v[])
+double vecSqrLen(int n, float v[])
 {
   return vecDot(n, v, v);
 }
 
-double ConjGrad(int n, implicitMatrix *A, double x[], double b[], 
+double ConjGrad(int n, implicitMatrix *A, float x[], float b[],
 		double epsilon,	// how low should we go?
 		int    *steps)
 {
   int		i, iMax;
   double	alpha, beta, rSqrLen, rSqrLenOld, u;
 
-  double *r = (double *) malloc(sizeof(double) * n);
-  double *d = (double *) malloc(sizeof(double) * n);
-  double *t = (double *) malloc(sizeof(double) * n);
-  double *temp = (double *) malloc(sizeof(double) * n);
+  float *r = (float *) malloc(sizeof(float) * n);
+  float *d = (float *) malloc(sizeof(float) * n);
+  float *t = (float *) malloc(sizeof(float) * n);
+  float *temp = (float *) malloc(sizeof(float) * n);
 
   vecAssign(n, x, b);
 

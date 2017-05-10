@@ -15,8 +15,6 @@
 #include "imageio.h"
 #include "forces/DragForce.h"
 
-#include "nanogui/screen.h"
-
 #if defined(_WIN32) || defined(WIN32)
 	#include <GL/glut.h>
 #else

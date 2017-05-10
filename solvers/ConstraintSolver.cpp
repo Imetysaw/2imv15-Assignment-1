@@ -151,7 +151,7 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     int numSteps = 1000;
 
     ConjGrad(constraints.size(), mtx, l, &JWJtL[0], 0.00001f, &numSteps);
-    printf("Used %i steps", numSteps);
+    printf("Used %i steps\n", numSteps);
 
     std::vector< float > lambda(l, l + sizeof l / sizeof l[0]);
 

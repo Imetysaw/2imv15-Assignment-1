@@ -11,7 +11,7 @@
 
 class View {
 public:
-    View(int width, int height, float dt, SystemBuilder::AvailableSystems system);
+    View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N);
 
     ~View() { delete sys; };
 
@@ -26,13 +26,20 @@ public:
 private:
     System* sys = NULL;
     int id;
-    int mx, my;
+    int mx, my, omx, omy, hmx, hmy;
     int width, height;
     bool dumpFrames;
     bool isSimulating;
+    int N;
     int frameNumber;
     float dt;
+    float camAngle = 0;
+    int mouse_down[3];
+    int mouse_release[3];
+    int mouse_shiftclick[3];
 
+    void getFromGUI();
+    void remapGUI();
     void initialize(SystemBuilder::AvailableSystems type);
 
     // Display utility

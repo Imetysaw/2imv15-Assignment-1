@@ -34,8 +34,8 @@ void keypressCallback(unsigned char k, int x, int y) {
     currentInstance->onKeyPress(k, x, y);
 }
 
-View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), frameNumber(0), dt(dt) {
+View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
+        : width(width), height(height), isSimulating(false), dumpFrames(false), frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
     glutInitWindowPosition ( 0, 0 );
@@ -94,13 +94,13 @@ void View::onKeyPress ( unsigned char key, int x, int y )
 
 void View::onMouseEvent( int button, int state, int x, int y )
 {
-//    omx = mx = x;
-//    omx = my = y;
-//
-//    if(!mouse_down[0]){hmx=x; hmy=y;}
-//    if(mouse_down[button]) mouse_release[button] = state == GLUT_UP;
-//    if(mouse_down[button]) mouse_shiftclick[button] = glutGetModifiers()==GLUT_ACTIVE_SHIFT;
-//    mouse_down[button] = state == GLUT_DOWN;
+    omx = mx = x;
+    omx = my = y;
+
+    if(!mouse_down[0]){hmx=x; hmy=y;}
+    if(mouse_down[button]) mouse_release[button] = state == GLUT_UP;
+    if(mouse_down[button]) mouse_shiftclick[button] = glutGetModifiers()==GLUT_ACTIVE_SHIFT;
+    mouse_down[button] = state == GLUT_DOWN;
 }
 
 void View::onMotionEvent( int x, int y )
@@ -131,7 +131,7 @@ void View::onReshape(int width, int height )
 void View::onIdle()
 {
     if ( isSimulating ) sys->step(dt);
-//    else        {get_from_UI();remap_GUI();}
+    else {getFromGUI();remapGUI();}
 
     glutSetWindow ( id );
     glutPostRedisplay ();
@@ -155,8 +155,8 @@ void View::preDisplay3D()
     glLoadIdentity ();
     glTranslatef(0.0f, 0.0f, -4.0f);
     glRotatef(20, 1.0f, 0.0f, 0.0f);
-//    glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
-//    camAngle+=0.5f;
+    glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
+    camAngle+=0.5f;
 }
 
 void View::postDisplay()
@@ -183,4 +183,46 @@ void View::postDisplay()
     frameNumber++;
 
     glutSwapBuffers ();
+}
+
+void View::getFromGUI() {
+    int i, j;
+    // int size, flag;
+    int hi, hj;
+    // float x, y;
+    if ( !mouse_down[0] && !mouse_down[2] && !mouse_release[0]
+         && !mouse_shiftclick[0] && !mouse_shiftclick[2] ) return;
+
+    i = (int)((       mx /(float)width)*N);
+    j = (int)(((height-my)/(float)height)*N);
+
+    if ( i<1 || i>N || j<1 || j>N ) return;
+
+    if ( mouse_down[0] ) {
+
+    }
+
+    if ( mouse_down[2] ) {
+    }
+
+    hi = (int)((       hmx /(float)width)*N);
+    hj = (int)(((height-hmy)/(float)height)*N);
+
+    if( mouse_release[0] ) {
+    }
+
+    omx = mx;
+    omy = my;
+}
+
+
+
+void View::remapGUI()
+{
+	for(int i=0; i < sys->particles.size(); i++)
+	{
+        sys->particles[i]->position[0] = sys->particles[i]->startPos[0];
+        sys->particles[i]->position[1] = sys->particles[i]->startPos[1];
+        sys->particles[i]->position[2] = sys->particles[i]->startPos[2];
+	}
 }

@@ -58,7 +58,7 @@ System* SystemBuilder::initCloth() {
 
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.005f)));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.01f)));
     sys->addForce(new DragForce(sys->particles, 0.2f));
 
     for (int x = 0; x < gSize - 1; x++) {

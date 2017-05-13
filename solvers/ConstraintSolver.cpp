@@ -3,66 +3,11 @@
 //
 
 #include "ConstraintSolver.h"
-#include "../linearSolver.h"
-#include <assert.h>
 #include <Eigen/Dense>
 #include <Eigen/IterativeLinearSolvers>
 
 using namespace Eigen;
 using namespace std;
-
-//vector<vector<float>> mult(vector<vector<float>> m1,
-//                           vector<vector<float>> m2) {
-//    unsigned long r1 = m1.size(), r2 = m2.size(), c1 = m1[0].size(), c2 = m2[0].size();
-//    assert(c1 == r2);
-//
-//    vector<vector<float>> r = vector<vector<float>>(r1, vector<float>(c2));
-//
-//    for (int i = 0; i < r1; ++i) {
-//        for (int j = 0; j < c2; ++j) {
-//            for (int k = 0; k < c1; ++k) {
-//                r[i][j] += m1[i][k] * m2[k][j];
-//            }
-//        }
-//    }
-//
-//    return r;
-//}
-//
-//vector<float> mult(vector<float> v, float multiplier) {
-//    vector<float> r = vector<float>(v.size());
-//
-//    for (int i = 0; i < v.size(); i++) {
-//        r[i] = v[i] * multiplier;
-//    }
-//
-//    return r;
-//}
-//
-//vector<float> mult(vector<vector<float>> m,
-//                           vector<float> v) {
-//    vector<float> r = vector<float>(m[0].size());
-//    for (int i = 0; i < m[0].size(); i++) {
-//        float result = 0;
-//
-//        for (int j = 0; j < m.size(); j++) {
-//            result += m[j][i] * v[j];
-//        }
-//
-//        r[i] = result;
-//    }
-//
-//    return r;
-//}
-//
-//vector<float> sub(vector< float > v1, vector< float > v2) {
-//    vector<float> r = vector< float >(v1.size(), 0);
-//    for (int i = 0; i < v1.size(); i++) {
-//        r[i] = v1[i] - v2[i];
-//    }
-//
-//    return r;
-//}
 
 /**
  * Solves the constraints of the system

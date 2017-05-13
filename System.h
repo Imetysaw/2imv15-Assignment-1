@@ -20,6 +20,10 @@ private:
     void drawParticles();
     void drawForces();
     void drawConstraints();
+    void computeDerivative(vector<float> &dst);
+
+    void computeForces();
+    void clearForces();
 
     Solver* solver;
     float time;
@@ -33,12 +37,12 @@ public:
     void addParticle(Particle* p);
     void addForce(Force* f);
     void addConstraint(Constraint* c);
-    State getState();
-    void setState(State s);
 
-    void computeForces();
-    void computeConstraints();
-    void clearForces();
+    // ODE interface
+    void derivEval(std::vector<float> &dst);
+    std::vector<float> getState();
+    void setState(std::vector<float> &src);
+    unsigned long getDim();
 
     void step(float dt);
     void free();

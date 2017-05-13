@@ -4,6 +4,7 @@
 
 #include "System.h"
 #include "solvers/Solver.h"
+#include "solvers/ConstraintSolver.h"
 
 System::System(Solver* solver) : solver(solver), time(0.0f) {}
 
@@ -73,38 +74,55 @@ void System::step(float dt)
     time += dt;
 }
 
-/**
- * Clears all forces from the particles in the system
- */
-void System::clearForces()
-{
-    for (Particle* p : particles) {
-        p->force = Vec3f(0.0, 0.0, 0.0);
-    }
+
+unsigned long System::getDim() {
+    return particles.size() * 3 * 2; // 3 dimensions, velocity and position
 }
 
 /**
  * Constructs a state given the current system
  * @return A copy of the current state of the system
  */
-State System::getState()
+std::vector<float> System::getState()
 {
-    State s;
-    std::vector<Particle*> particles;
+    std::vector<float> r;
 
     for (Particle* p : this->particles) {
-        particles.push_back(p);
+        r.push_back(p->position[0]);
+        r.push_back(p->position[1]);
+        r.push_back(p->position[2]);
+        r.push_back(p->velocity[0]);
+        r.push_back(p->velocity[1]);
+        r.push_back(p->velocity[2]);
     }
 
-    s.p = particles;
-    s.n = particles.size();
-    return s;
+    return r;
 }
 
-void System::setState(State s)
-{
-    particles = s.p;
+/**
+ * Evaluates a derivative
+ * @param dst The destination vector
+ */
+void System::derivEval(std::vector<float> &dst) {
+    clearForces();
+    computeForces();
+    ConstraintSolver::solve(this, 60.0f, 50.0f);
+    computeDerivative(dst);
 }
+
+void System::setState(vector<float> &src)
+{
+    for(int i=0; i < particles.size(); i++){
+        particles[i]->position[0] = src[i * 6 + 0];
+        particles[i]->position[1] = src[i * 6 + 1];
+        particles[i]->position[2] = src[i * 6 + 2];
+        particles[i]->velocity[0] = src[i * 6 + 3];
+        particles[i]->velocity[1] = src[i * 6 + 4];
+        particles[i]->velocity[2] = src[i * 6 + 5];
+    }
+}
+
+/// Private ///
 
 void System::computeForces()
 {
@@ -113,7 +131,24 @@ void System::computeForces()
     }
 }
 
-/// Private ///
+void System::clearForces()
+{
+    for (Particle* p : particles) {
+        p->force = Vec3f(0.0f, 0.0f, 0.0f);
+    }
+}
+
+void System::computeDerivative(vector<float> &dst)
+{
+    for(int i=0; i < particles.size(); i++){
+        dst.push_back(particles[i]->velocity[0]);             /* xdot = v */
+        dst.push_back(particles[i]->velocity[1]);
+        dst.push_back(particles[i]->velocity[2]);
+        dst.push_back(particles[i]->force[0] / particles[i]->mass); /* vdot = f/m */
+        dst.push_back(particles[i]->force[1] / particles[i]->mass);
+        dst.push_back(particles[i]->force[2] / particles[i]->mass);
+    }
+}
 
 void System::drawParticles()
 {

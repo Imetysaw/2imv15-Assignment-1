@@ -71,7 +71,6 @@ void System::draw()
 void System::step(float dt)
 {
     solver->simulateStep(this, dt);
-    time += dt;
 }
 
 
@@ -99,6 +98,10 @@ std::vector<float> System::getState()
     return r;
 }
 
+float System::getTime() {
+    return time;
+}
+
 /**
  * Evaluates a derivative
  * @param dst The destination vector
@@ -110,7 +113,7 @@ void System::derivEval(std::vector<float> &dst) {
     computeDerivative(dst);
 }
 
-void System::setState(vector<float> &src)
+void System::setState(vector<float> &src, float t)
 {
     for(int i=0; i < particles.size(); i++){
         particles[i]->position[0] = src[i * 6 + 0];
@@ -120,6 +123,7 @@ void System::setState(vector<float> &src)
         particles[i]->velocity[1] = src[i * 6 + 4];
         particles[i]->velocity[2] = src[i * 6 + 5];
     }
+    this->time = t;
 }
 
 /// Private ///
@@ -154,7 +158,7 @@ void System::drawParticles()
 {
     for(Particle* p : particles)
     {
-        p->draw();
+//        p->draw();
     }
 }
 

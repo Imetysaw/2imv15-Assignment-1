@@ -10,7 +10,7 @@
 
 class Midpoint : public Solver {
 public:
-    void simulateStep(System* system, float dt) override;
+    void simulateStep(System* system, float h) override;
 };
 
 

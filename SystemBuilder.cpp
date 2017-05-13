@@ -23,7 +23,7 @@ System* SystemBuilder::get(AvailableSystems s) {
 
 System* SystemBuilder::initBasic()
 {
-    System* sys = new System(new Midpoint());
+    System* sys = new System(new Euler());
 
     const float dist = 0.2f;
     const Vec3f center(0.0, 0.0, 0.0);
@@ -46,7 +46,7 @@ System* SystemBuilder::initBasic()
 }
 
 System* SystemBuilder::initCloth() {
-    System* sys = new System(new Midpoint());
+    System* sys = new System(new Euler());
 
     const int gSize = 12;
 
@@ -59,7 +59,7 @@ System* SystemBuilder::initCloth() {
 
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.01f)));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.05f)));
     sys->addForce(new DragForce(sys->particles, 0.5f));
 
     for (int x = 0; x < gSize - 1; x++) {

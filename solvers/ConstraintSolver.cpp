@@ -28,10 +28,10 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     unsigned long pSize = particles.size() * dimensions;
 
     // Define vectors and matrices with the correct sizes
-    VectorXd qd = VectorXd::Zero(pSize);
-    VectorXd Q = VectorXd::Zero(pSize);
-    MatrixXd M = MatrixXd::Zero(pSize, pSize);
-    MatrixXd W = MatrixXd::Zero(pSize, pSize);
+    VectorXf qd = VectorXf::Zero(pSize);
+    VectorXf Q = VectorXf::Zero(pSize);
+    MatrixXf M = MatrixXf::Zero(pSize, pSize);
+    MatrixXf W = MatrixXf::Zero(pSize, pSize);
 
     // Compute qd, Q, M and W based on the particles
     for (int i = 0; i < pSize; i += dimensions) {
@@ -47,11 +47,11 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
     unsigned long cSize = constraints.size();
 
     // Instantiate vector and matrices
-    VectorXd C = VectorXd::Zero(cSize);
-    VectorXd Cd = VectorXd::Zero(cSize);
-    MatrixXd J = MatrixXd::Zero(cSize, pSize);
-    MatrixXd Jt = MatrixXd::Zero(pSize, cSize);
-    MatrixXd Jd = MatrixXd::Zero(cSize, pSize);
+    VectorXf C = VectorXf::Zero(cSize);
+    VectorXf Cd = VectorXf::Zero(cSize);
+    MatrixXf J = MatrixXf::Zero(cSize, pSize);
+    MatrixXf Jt = MatrixXf::Zero(pSize, cSize);
+    MatrixXf Jd = MatrixXf::Zero(cSize, pSize);
 
     // Compute the values for each constraint
     for (int i = 0; i < cSize; i++) {
@@ -75,27 +75,27 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
         }
     }
 
-    MatrixXd JW = J * W;
-    MatrixXd JWJt = JW * Jt;
-    VectorXd Jdqd = Jd * qd;
-    VectorXd JWQ = JW * Q;
+    MatrixXf JW = J * W;
+    MatrixXf JWJt = JW * Jt;
+    VectorXf Jdqd = Jd * qd;
+    VectorXf JWQ = JW * Q;
 
-    VectorXd KsC = Ks * C;
-    VectorXd KdCd = Kd * Cd;
+    VectorXf KsC = Ks * C;
+    VectorXf KdCd = Kd * Cd;
 
     // Compute rhs
-    VectorXd rhs = - Jdqd - JWQ - KsC - KdCd;
+    VectorXf rhs = - Jdqd - JWQ - KsC - KdCd;
 
     // Initialize CG method
-    ConjugateGradient<MatrixXd, Lower|Upper> cg;
+    ConjugateGradient<MatrixXf, Lower|Upper> cg;
 
     // Compute lambda
     cg.compute(JWJt);
-    VectorXd lambda = cg.solve(rhs);
+    VectorXf lambda = cg.solve(rhs);
 //    printf("Iterations: %i\n", cg.iterations());
 //    printf("Error: %d\n", cg.error());
 
-    VectorXd Qh = J.transpose() * lambda;
+    VectorXf Qh = J.transpose() * lambda;
     for (int i = 0; i < particles.size(); i++) {
         Particle *p = particles[i];
         int index = dimensions * i;

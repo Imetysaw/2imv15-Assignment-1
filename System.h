@@ -41,7 +41,8 @@ public:
     // ODE interface
     void derivEval(std::vector<float> &dst);
     std::vector<float> getState();
-    void setState(std::vector<float> &src);
+    float getTime();
+    void setState(std::vector<float> &src, float time);
     unsigned long getDim();
 
     void step(float dt);

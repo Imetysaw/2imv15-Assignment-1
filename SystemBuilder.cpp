@@ -8,6 +8,7 @@
 #include "forces/DirectionalForce.h"
 #include "forces/DragForce.h"
 #include "constraints/CircularWireConstraint.h"
+#include "constraints/RodConstraint.h"
 
 System* SystemBuilder::get(AvailableSystems s) {
     switch (s) {
@@ -34,12 +35,11 @@ System* SystemBuilder::initBasic()
     sys->addParticle(new Particle(center + offset + offset, 1.0f));
     sys->addParticle(new Particle(center + offset + offset + offset, 1.0f));
 
-    // You should replace these with a vector generalized forces and one of
-    // constraints...
+    sys->addForce(new DragForce(sys->particles, 0.1f));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981f, 0)));
 
-//	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
+	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist, {0}));
     return sys;
 }
@@ -59,7 +59,7 @@ System* SystemBuilder::initCloth() {
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.01f)));
-    sys->addForce(new DragForce(sys->particles, 0.2f));
+    sys->addForce(new DragForce(sys->particles, 0.5f));
 
     for (int x = 0; x < gSize - 1; x++) {
         for (int y = 0; y < gSize; y++) {

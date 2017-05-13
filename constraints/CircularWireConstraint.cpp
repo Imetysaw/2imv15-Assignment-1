@@ -44,10 +44,10 @@ float CircularWireConstraint::C() {
  * @return x * xd
  */
 float CircularWireConstraint::Cd() {
-    Vec3f pVector = (particle->position - center) * 2;
+    Vec3f pVector = (particle->position - center);
     Vec3f vVector = particle->velocity;
 
-    return pVector * vVector;
+    return 2 * pVector * vVector;
 }
 
 /**

@@ -15,10 +15,9 @@ FIND_PACKAGE(OpenGl REQUIRED)
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS})
 LINK_LIBRARIES(${OPENGL_LIBRARIES})
 
-
-include_directories(lib/nanogui/include)
-include_directories(${NANOGUI_EXTRA_INCS})
-add_definitions(${NANOGUI_EXTRA_DEFS})
+include_directories(lib/eigen)
+include_directories(${EIGEN_EXTRA_INCS})
+add_definitions(${EIGEN_EXTRA_DEFS})
 
 INCLUDE_DIRECTORIES(include)
 

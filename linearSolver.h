@@ -11,14 +11,17 @@
 
 #define MAX_STEPS 100
 
+#include <Eigen/Dense>
+
 using namespace std;
+using namespace Eigen;
 
 // Matrix class the solver will accept
 class implicitMatrix
 {
  public:
-	implicitMatrix(std::vector<std::vector<float> > *matrix) {
-		m = matrix;
+	implicitMatrix(MatrixXf *m) {
+		this->m = m;
 	}
 
 	virtual void matVecMult(float x[], float r[]) {
@@ -26,7 +29,7 @@ class implicitMatrix
 			int res = 0;
 
 			for (int j = 0; j < m[0].size(); j++) {
-				res += (*m)[j][i] * x[j];
+				res += (*m)(j, i) * x[j];
 			}
 
 			r[i] = res;
@@ -34,7 +37,7 @@ class implicitMatrix
 	}
 
 private:
-	std::vector<std::vector<float> > *m;
+	MatrixXf *m;
 
 };
 

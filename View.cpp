@@ -64,9 +64,7 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
 }
 
 void View::initialize(SystemBuilder::AvailableSystems type) {
-    printf("SYSTEM IS GO");
     sys = SystemBuilder::get(type);
-    printf("%i", sys->particles.size());
 }
 
 void View::onKeyPress ( unsigned char key, int x, int y )

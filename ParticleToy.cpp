@@ -24,7 +24,7 @@ int main ( int argc, char ** argv )
     float d;
 	if ( argc == 1 ) {
 		N = 64;
-		dt = 0.1f;
+		dt = 0.02f;
 		d = 5.f;
 		fprintf ( stderr, "Using defaults : N=%d dt=%g d=%g\n",
 			N, dt, d );
@@ -39,7 +39,7 @@ int main ( int argc, char ** argv )
 	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
 
-	View v(512, 512, dt, SystemBuilder::CLOTH, N);
+	View v(512, 512, dt, SystemBuilder::BASIC, N);
 
 	exit ( 0 );
 }

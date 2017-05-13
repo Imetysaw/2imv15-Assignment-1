@@ -4,6 +4,7 @@
 
 #include "SystemBuilder.h"
 #include "solvers/Euler.h"
+#include "solvers/Midpoint.h"
 #include "forces/SpringForce.h"
 #include "forces/DirectionalForce.h"
 #include "forces/DragForce.h"
@@ -22,7 +23,7 @@ System* SystemBuilder::get(AvailableSystems s) {
 
 System* SystemBuilder::initBasic()
 {
-    System* sys = new System(new Euler());
+    System* sys = new System(new Midpoint());
 
     const float dist = 0.2f;
     const Vec3f center(0.0, 0.0, 0.0);
@@ -45,7 +46,7 @@ System* SystemBuilder::initBasic()
 }
 
 System* SystemBuilder::initCloth() {
-    System* sys = new System(new Euler());
+    System* sys = new System(new Midpoint());
 
     const int gSize = 12;
 

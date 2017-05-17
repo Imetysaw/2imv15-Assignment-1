@@ -82,17 +82,18 @@ unsigned long System::getDim() {
  * Constructs a state given the current system
  * @return A copy of the current state of the system
  */
-std::vector<float> System::getState()
+VectorXf System::getState()
 {
-    std::vector<float> r;
+    VectorXf r(this->getDim());
 
-    for (Particle* p : this->particles) {
-        r.push_back(p->position[0]);
-        r.push_back(p->position[1]);
-        r.push_back(p->position[2]);
-        r.push_back(p->velocity[0]);
-        r.push_back(p->velocity[1]);
-        r.push_back(p->velocity[2]);
+    for (int i = 0; i < this->particles.size(); i++) {
+        Particle* p = particles[i];
+        r[i * 6 + 0] = p->position[0];
+        r[i * 6 + 1] = p->position[1];
+        r[i * 6 + 2] = p->position[2];
+        r[i * 6 + 3] = p->velocity[0];
+        r[i * 6 + 4] = p->velocity[1];
+        r[i * 6 + 5] = p->velocity[2];
     }
 
     return r;
@@ -106,14 +107,14 @@ float System::getTime() {
  * Evaluates a derivative
  * @param dst The destination vector
  */
-void System::derivEval(std::vector<float> &dst) {
+VectorXf System::derivEval() {
     clearForces();
     computeForces();
     ConstraintSolver::solve(this, 60.0f, 50.0f);
-    computeDerivative(dst);
+    return computeDerivative();
 }
 
-void System::setState(vector<float> &src, float t)
+void System::setState(VectorXf src, float t)
 {
     for(int i=0; i < particles.size(); i++){
         particles[i]->position[0] = src[i * 6 + 0];
@@ -142,16 +143,19 @@ void System::clearForces()
     }
 }
 
-void System::computeDerivative(vector<float> &dst)
+VectorXf System::computeDerivative()
 {
+    VectorXf dst(this->getDim());
     for(int i=0; i < particles.size(); i++){
-        dst.push_back(particles[i]->velocity[0]);             /* xdot = v */
-        dst.push_back(particles[i]->velocity[1]);
-        dst.push_back(particles[i]->velocity[2]);
-        dst.push_back(particles[i]->force[0] / particles[i]->mass); /* vdot = f/m */
-        dst.push_back(particles[i]->force[1] / particles[i]->mass);
-        dst.push_back(particles[i]->force[2] / particles[i]->mass);
+        Particle* p = particles[i];
+        dst[i * 6 + 0] = p->velocity[0];        /* xdot = v */
+        dst[i * 6 + 1] = p->velocity[1];
+        dst[i * 6 + 2] = p->velocity[2];
+        dst[i * 6 + 3] = p->force[0] / p->mass; /* vdot = f/m */
+        dst[i * 6 + 4] = p->force[1] / p->mass;
+        dst[i * 6 + 5] = p->force[2] / p->mass;
     }
+    return dst;
 }
 
 void System::drawParticles()

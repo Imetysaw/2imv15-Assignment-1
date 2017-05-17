@@ -5,14 +5,13 @@
 #ifndef PARTICLETOY_SYSTEM_H
 #define PARTICLETOY_SYSTEM_H
 
+#include "Eigen/Dense"
+
 #include "Particle.h"
 #include "constraints/Constraint.h"
 #include "forces/Force.h"
 
-typedef struct {
-    std::vector<Particle*> p;
-    int n;
-} State;
+using namespace Eigen;
 
 class Solver;
 class System {
@@ -20,7 +19,7 @@ private:
     void drawParticles();
     void drawForces();
     void drawConstraints();
-    void computeDerivative(vector<float> &dst);
+    VectorXf computeDerivative();
 
     void computeForces();
     void clearForces();
@@ -39,10 +38,10 @@ public:
     void addConstraint(Constraint* c);
 
     // ODE interface
-    void derivEval(std::vector<float> &dst);
-    std::vector<float> getState();
+    VectorXf derivEval();
+    VectorXf getState();
     float getTime();
-    void setState(std::vector<float> &src, float time);
+    void setState(VectorXf newState, float time);
     unsigned long getDim();
 
     void step(float dt);

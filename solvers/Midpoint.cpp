@@ -7,29 +7,22 @@
 void Midpoint::simulateStep(System *system, float h) {
 
     // Get the initial state
-    std::vector<float> oldState;
-    oldState = system->getState();
+    VectorXf oldState = system->getState();
 
     // Evaluate a deriv step
-    std::vector<float> deriv;
-    system->derivEval(deriv);
+    VectorXf deriv = system->derivEval();
 
     // Compute the halfway point
-    std::vector<float> midPointState(system->getDim());
-    for (int i = 0; i < system->getDim(); i++) {
-        midPointState[i] = oldState[i] + deriv[i] * h * 0.5f;
-    }
+    VectorXf midPointState = oldState + h * 0.5f * deriv;
+
     // Set the state to this midpoint
     system->setState(midPointState, system->getTime() + h);
 
     // Evaluate derivative at the midpoint
-    system->derivEval(deriv);
+    deriv = system->derivEval();
 
     // Update the state based on the computation from this midpoint
-    std::vector<float> newState(system->getDim());
-    for (int i = 0; i < system->getDim(); i++) {
-        newState[i] = oldState[i] + deriv[i] * h;
-    }
+    VectorXf newState = oldState + h * deriv;
 
     system->setState(newState, system->getTime() + h);
 }

@@ -11,6 +11,7 @@ public:
     enum AvailableSystems {
         CLOTH,
         BASIC,
+        HAIR,
     };
 
     static System* get(AvailableSystems s);
@@ -18,6 +19,7 @@ public:
 private:
     static System* initBasic();
     static System* initCloth();
+    static System* initHair();
 };
 
 

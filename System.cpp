@@ -158,7 +158,7 @@ void System::drawParticles()
 {
     for(Particle* p : particles)
     {
-//        p->draw();
+        p->draw();
     }
 }
 

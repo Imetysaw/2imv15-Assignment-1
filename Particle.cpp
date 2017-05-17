@@ -22,14 +22,12 @@ void Particle::reset()
 }
 void Particle::draw()
 {
-	const double h = 0.01;
-	glColor3f(1.f, 1.f, 1.f); 
-//	glBegin(GL_QUADS);
-//	glVertex2f(position[0]-h/2.0, position[1]-h/2.0);
-//	glVertex2f(position[0]+h/2.0, position[1]-h/2.0);
-//	glVertex2f(position[0]+h/2.0, position[1]+h/2.0);
-//	glVertex2f(position[0]-h/2.0, position[1]+h/2.0);
-//	glEnd();
+	const float h = .1f;
+	glColor3f(1.f, 1.f, 1.f);
+    glPointSize(h);
+	glBegin(GL_POINTS);
+    glVertex3f(position[0], position[1], position[2]);
+	glEnd();
 
 
     glColor3f(0.0, 0.7, 0.0);

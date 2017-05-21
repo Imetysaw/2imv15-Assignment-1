@@ -10,6 +10,7 @@
 #include "forces/DragForce.h"
 #include "constraints/CircularWireConstraint.h"
 #include "constraints/RodConstraint.h"
+#include "solvers/RungeKutta.h"
 
 System* SystemBuilder::get(AvailableSystems s) {
     switch (s) {
@@ -46,7 +47,7 @@ System* SystemBuilder::initBasic()
 }
 
 System* SystemBuilder::initCloth() {
-    System* sys = new System(new Euler());
+    System* sys = new System(new RungeKutta());
 
     const int xSize = 10, ySize = 26;
     const float deltaX = 1.0f/xSize, deltaY = 1.0f/ySize;

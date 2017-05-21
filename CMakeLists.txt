@@ -49,7 +49,7 @@ set(SOURCE_FILES
         constraints/RodConstraint.cpp
         constraints/RodConstraint.h
         forces/SpringForce.cpp
-        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h System.cpp System.h solvers/Euler.cpp solvers/Euler.h solvers/Solver.h constraints/Constraint.h solvers/ConstraintSolver.cpp solvers/ConstraintSolver.h forces/DragForce.cpp forces/DragForce.h View.cpp View.h SystemBuilder.cpp SystemBuilder.h solvers/Midpoint.cpp solvers/Midpoint.h)
+        forces/SpringForce.h forces/DirectionalForce.cpp forces/DirectionalForce.h forces/Force.cpp forces/Force.h System.cpp System.h solvers/Euler.cpp solvers/Euler.h solvers/Solver.h constraints/Constraint.h solvers/ConstraintSolver.cpp solvers/ConstraintSolver.h forces/DragForce.cpp forces/DragForce.h View.cpp View.h SystemBuilder.cpp SystemBuilder.h solvers/Midpoint.cpp solvers/Midpoint.h solvers/RungeKutta.h solvers/RungeKutta.cpp)
 
 
 add_executable(ParticleToy ${SOURCE_FILES})

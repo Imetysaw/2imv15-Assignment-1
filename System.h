@@ -19,7 +19,6 @@ private:
     void drawParticles();
     void drawForces();
     void drawConstraints();
-    VectorXf computeDerivative();
 
     void computeForces();
     void clearForces();
@@ -39,6 +38,7 @@ public:
 
     // ODE interface
     VectorXf derivEval();
+    VectorXf computeDerivative();
     VectorXf getState();
     float getTime();
     void setState(VectorXf newState, float time);

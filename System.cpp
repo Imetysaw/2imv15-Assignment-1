@@ -182,33 +182,46 @@ void System::drawParticles(bool drawUtil)
             Vec3f d2 = particles[x]->position - particles[x + dx]->position;
 
             Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
-            float s = n * lx;
-            if (s < 0) s = 0;
-            if (s > 1) s = 1;
+//            float s = n * lx;
+//            if (s < 0) s = 0;
+//            if (s > 1) s = 1;
             s = .7f;
             glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
+            //draw front
             glNormal3f(n[0], n[1], n[2]);
             glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
             glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                        particles[x + dx + 1]->position[2]);
             glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
+            //draw back
+            glNormal3f(-n[0], -n[1], -n[2]);
+            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
+            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+                       particles[x + dx + 1]->position[2]);
 
 
             d1 = particles[x]->position - particles[x + 1]->position;
             d2 = particles[x]->position - particles[x + dx + 1]->position;
 
             n = - (cross(d1, d2) / norm(cross(d1, d2)));
-            s = n * lx;
-            if (s < 0) s = 0;
-            if (s > 1) s = 1;
+//            s = n * lx;
+//            if (s < 0) s = 0;
+//            if (s > 1) s = 1;
             s = .7f;
             glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
-
+            //draw front
             glNormal3f(n[0], n[1], n[2]);
             glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
             glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
             glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                        particles[x + dx + 1]->position[2]);
+            //draw back
+            glNormal3f(-n[0], -n[1], -n[2]);
+            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+                       particles[x + dx + 1]->position[2]);
+            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
         }
     }
     glEnd();

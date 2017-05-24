@@ -46,7 +46,8 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
-
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHT0);
 

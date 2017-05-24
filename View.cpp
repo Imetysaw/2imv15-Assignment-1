@@ -102,6 +102,14 @@ void View::onKeyPress ( unsigned char key, int x, int y )
         case '/':
             rotate = 0;
             break;
+        case '[':
+            if(windForce) {
+                windForce->toggle();
+            } else {
+                windForce = new DirectionalForce(this->sys->particles, Vec3f(5.f, 3.f, 5.f));
+                sys->addForce(windForce);
+            }
+            break;
         case ' ':
             isSimulating = !isSimulating;
             if(isSimulating)

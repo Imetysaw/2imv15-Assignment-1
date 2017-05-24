@@ -26,21 +26,27 @@ System* SystemBuilder::get(AvailableSystems s) {
 
 System* SystemBuilder::initBasic()
 {
-    System* sys = new System(new RungeKutta());
+    System* sys = new System(new Euler());
 
-    const float dist = 0.2f;
+    const float dist = 0.5f;
     const Vec3f center(0.0, 0.0, 0.0);
     const Vec3f offset(dist, 0.0, 0.0);
 
     sys->addParticle(new Particle(center + offset, 1.0f));
-    sys->addParticle(new Particle(center + offset + offset, 1.0f));
-    sys->addParticle(new Particle(center + offset + offset + offset, 1.0f));
+    sys->addParticle(new Particle(center + offset * 2, 1.0f));
+    sys->addParticle(new Particle(center + offset * 3, 1.0f));
+    sys->addParticle(new Particle(center + offset * 3, 1.0f));
+    sys->addParticle(new Particle(center + offset * 4, 1.0f));
+    sys->addParticle(new Particle(center + offset * 4, 1.0f));
 
-    sys->addForce(new DragForce(sys->particles, 0.4f));
-    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 1.0, 1.0));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0981f, 0)));
+    sys->addForce(new DragForce(sys->particles, 0.5f));
+    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
+    sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
+    sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 50.f, 1.5f));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
 
-	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
+    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
+    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist, {1, 3}));
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist, {0}));
 
     return sys;

@@ -6,13 +6,13 @@
 class SpringForce : public Force {
 
 public:
-    SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd);
-    SpringForce(std::vector<Particle*> particles, double dist, double ks, double kd);
+    SpringForce(Particle *p1, Particle * p2, float dist, float ks, float kd);
+    SpringForce(std::vector<Particle*> particles, float dist, float ks, float kd);
 
     void draw() override;
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
 private:
-    double const dist;     // rest length
-    double const ks, kd; // spring strength constants
+    float const dist;     // rest length
+    float const ks, kd; // spring strength constants
 };

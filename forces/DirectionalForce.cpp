@@ -16,6 +16,8 @@ void DirectionalForce::setTarget(std::vector<Particle*> particles)
 
 void DirectionalForce::apply()
 {
+    if (!active)
+        return;
     for (Particle* p : particles) {
         p->force += p->mass * direction;
     }

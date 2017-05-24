@@ -170,6 +170,18 @@ VectorXf System::computeDerivative()
 
 void System::drawParticles(bool drawUtil)
 {
+    // 10 x 26
+//    glFrontFace(GL_CW);
+//    glBegin(GL_TRIANGLE_STRIP);
+//    glVertex3f(this->particles[10]->position[0], this->particles[10]->position[1], this->particles[10]->position[2]);
+//    glVertex3f(this->particles[0]->position[0], this->particles[0]->position[1], this->particles[0]->position[2]);
+//    glVertex3f(this->particles[11]->position[0], this->particles[11]->position[1], this->particles[11]->position[2]);
+//    for (int i = 0; i < this->getDim(); i++) {
+//
+//    }
+//    glEnd();
+
+//    return;
     for(Particle* p : particles)
     {
         p->draw(drawUtil);

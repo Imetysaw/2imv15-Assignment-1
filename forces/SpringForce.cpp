@@ -7,10 +7,10 @@
 #endif
 #include <assert.h>
 
-SpringForce::SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd) :
+SpringForce::SpringForce(Particle *p1, Particle * p2, float dist, float ks, float kd) :
        SpringForce({p1, p2}, dist, ks, kd) {}
 
-SpringForce::SpringForce(std::vector<Particle*> particles, double dist, double ks, double kd) : dist(dist), ks(ks), kd(kd)
+SpringForce::SpringForce(std::vector<Particle*> particles, float dist, float ks, float kd) : dist(dist), ks(ks), kd(kd)
 {
     setTarget(particles);
 }
@@ -37,10 +37,10 @@ void SpringForce::apply()
 
 void SpringForce::draw()
 {
-  glBegin( GL_LINES );
-  glColor3f(0.8, 0.8, 0.8);
-  glVertex3f( particles[0]->position[0], particles[0]->position[1], particles[0]->position[2] );
-  glColor3f(0.6, 0.6, 0.6);
-  glVertex3f( particles[1]->position[0], particles[1]->position[1], particles[1]->position[2] );
-  glEnd();
+    float deltaDist = norm(particles[0]->position - particles[1]->position) - dist;
+    glBegin( GL_LINES );
+    glColor3f(0.8f, 0.8f - deltaDist, 0.8f - deltaDist);
+    glVertex3f( particles[0]->position[0], particles[0]->position[1], particles[0]->position[2] );
+    glVertex3f( particles[1]->position[0], particles[1]->position[1], particles[1]->position[2] );
+    glEnd();
 }

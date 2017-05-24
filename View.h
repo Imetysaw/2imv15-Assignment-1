@@ -41,6 +41,7 @@ private:
     int mouse_release[3];
     int mouse_shiftclick[3];
     Force* mouseDragForce;
+    Force* windForce;
 
     Particle* mouseDragParticle;
 

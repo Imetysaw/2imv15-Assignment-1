@@ -110,9 +110,9 @@ System* SystemBuilder::initCloth() {
 //                                                  sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
 //                                                  0.05f, {0}));
     float r = 0.05f;
-    sys->addConstraint(new CircularWireConstraint(sys->particles[ySize/2 * xSize],
-                                                  sys->particles[ySize/2 * xSize]->startPos + Vec3f(-r, 0.f, 0.f),
-                                                  r, {ySize/2 * xSize}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], //ySize/2 * xSize],
+                                                  sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
+                                                  r, {0}));
     sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
                                                   sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
                                                   r, {xSize-1}));

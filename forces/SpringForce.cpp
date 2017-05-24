@@ -44,3 +44,8 @@ void SpringForce::draw()
     glVertex3f( particles[1]->position[0], particles[1]->position[1], particles[1]->position[2] );
     glEnd();
 }
+
+MatrixXf SpringForce::jx() {
+    MatrixXf jx = MatrixXf::Zero(particles->size(), particles->size());
+    return Eigen::MatrixXf();
+}

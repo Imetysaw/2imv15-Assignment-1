@@ -8,6 +8,10 @@
 #include "../Particle.h"
 #include <vector>
 
+#include <Eigen/Dense>
+
+using namespace Eigen;
+
 class Force {
 protected:
     std::vector<Particle*> particles;
@@ -18,6 +22,7 @@ public:
     virtual void apply() = 0;
     virtual void draw() = 0;
 
+    virtual MatrixXf jx() = 0;
     void setActive(bool state);
     void toggle();
 

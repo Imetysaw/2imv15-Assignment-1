@@ -27,3 +27,7 @@ void DragForce::draw()
 {
 
 }
+
+MatrixXf DragForce::jx() {
+    return Eigen::MatrixXf();
+}

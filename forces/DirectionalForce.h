@@ -15,6 +15,8 @@ public:
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
     void draw() override;
+
+    MatrixXf jx() override;
     Vec3f direction;
 private:
 };

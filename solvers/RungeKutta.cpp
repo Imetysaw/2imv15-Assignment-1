@@ -19,17 +19,17 @@ void RungeKutta::simulateStep(System *system, float h) {
     system->setState(newState, oldTime + h / 2);
 
     //Get derivative at midpoint for k2
-    deriv = system->computeDerivative();
+    deriv = system->derivEval();
     VectorXf k2 = h * deriv;
     newState = oldState + k2 / 2;
     system->setState(newState, oldTime + h / 2);
 
-    deriv = system->computeDerivative();
+    deriv = system->derivEval();
     VectorXf k3 = h * deriv;
     newState = oldState + k3;
     system->setState(newState, oldTime + h);
 
-    deriv = system->computeDerivative();
+    deriv = system->derivEval();
     VectorXf k4 = h * deriv;
 
     //Final state

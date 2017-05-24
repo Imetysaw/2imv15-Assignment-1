@@ -171,17 +171,49 @@ VectorXf System::computeDerivative()
 void System::drawParticles(bool drawUtil)
 {
     // 10 x 26
-//    glFrontFace(GL_CW);
-//    glBegin(GL_TRIANGLE_STRIP);
-//    glVertex3f(this->particles[10]->position[0], this->particles[10]->position[1], this->particles[10]->position[2]);
-//    glVertex3f(this->particles[0]->position[0], this->particles[0]->position[1], this->particles[0]->position[2]);
-//    glVertex3f(this->particles[11]->position[0], this->particles[11]->position[1], this->particles[11]->position[2]);
-//    for (int i = 0; i < this->getDim(); i++) {
-//
-//    }
-//    glEnd();
+    Vec3f lx = Vec3f(-.5f, .5f, 0);
+    glEnable(GL_LIGHTING);
+    glBegin(GL_TRIANGLES);
+    int dx = 10, dy = 26;
+    for (int zx = 0; zx < dx - 1; zx++){
+        for (int y = 0; y < dy - 1; y++) {
+            int x = zx + y * dx;
+            Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
+            Vec3f d2 = particles[x]->position - particles[x + dx]->position;
 
-//    return;
+            Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
+            float s = n * lx;
+            if (s < 0) s = 0;
+            if (s > 1) s = 1;
+            s = .7f;
+            glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
+            glNormal3f(n[0], n[1], n[2]);
+            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+                       particles[x + dx + 1]->position[2]);
+            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
+
+
+            d1 = particles[x]->position - particles[x + 1]->position;
+            d2 = particles[x]->position - particles[x + dx + 1]->position;
+
+            n = - (cross(d1, d2) / norm(cross(d1, d2)));
+            s = n * lx;
+            if (s < 0) s = 0;
+            if (s > 1) s = 1;
+            s = .7f;
+            glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
+
+            glNormal3f(n[0], n[1], n[2]);
+            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
+            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+                       particles[x + dx + 1]->position[2]);
+        }
+    }
+    glEnd();
+    glDisable(GL_LIGHTING);
+
     for(Particle* p : particles)
     {
         p->draw(drawUtil);
@@ -192,7 +224,7 @@ void System::drawForces()
 {
     for(Force* f : forces)
     {
-        f->draw();
+//        f->draw();
     }
 }
 

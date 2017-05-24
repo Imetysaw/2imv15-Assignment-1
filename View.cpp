@@ -46,6 +46,11 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_LIGHT0);
+
+
     glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -148,7 +153,7 @@ void View::onMouseEvent( int button, int state, int x, int y )
             gluProject(position[0], position[1], position[2], modelMatrix, projectionMatrix, viewMatrix,
                        &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
             double distance = abs(x - screenCoordinates[0]) + abs(y - (height - screenCoordinates[1]));
-            printf("%f\n",screenCoordinates[2]);
+//            printf("%f\n",screenCoordinates[2]);
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestParticle = sys->particles[i];
@@ -181,8 +186,8 @@ void View::onMotionEvent( int x, int y )
     gluUnProject(x, height - y, z, modelMatrix, projectionMatrix, viewMatrix, &objCoordinates[0],
                  &objCoordinates[1], &objCoordinates[2]);
     Vec3f position = mouseDragParticle->position;
-    mouseDragForce->direction = Vec3f((objCoordinates[0] - position[0])*6.5f, (objCoordinates[1] - position[1])*6.5f,
-                                      (objCoordinates[2] - position[2])*6.5f);
+    mouseDragForce->direction = 150.0f * Vec3f((objCoordinates[0] - position[0]), (objCoordinates[1] - position[1]),
+                                      (objCoordinates[2] - position[2]));
 }
 
 void View::onReshape(int width, int height )
@@ -199,7 +204,7 @@ void View::onReshape(int width, int height )
     glLoadIdentity();
     glTranslatef(0.0f, .5f, -1.5f);
 
-    gluPerspective(90.0f, aspect, 0.1f, 100.0f);
+    gluPerspective(90.0f, aspect, 0.1f, 1000.0f);
 
     this->width = width;
     this->height = height;
@@ -229,7 +234,7 @@ void View::onDisplay()
 
 void View::preDisplay3D()
 {
-    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glMatrixMode ( GL_MODELVIEW );
     glLoadIdentity ();
     glTranslatef(0.0f, 0.0f, -4.0f);

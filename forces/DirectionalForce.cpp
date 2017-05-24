@@ -27,3 +27,7 @@ void DirectionalForce::draw()
 {
 
 }
+
+MatrixXf DirectionalForce::jx() {
+    return MatrixXf::Zero(particles.size(), particles.size());
+}

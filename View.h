@@ -30,6 +30,7 @@ private:
     int initialMx, initialMy;
     int width, height;
     bool dumpFrames;
+    bool drawUtil;
     bool isSimulating;
     int N;
     int frameNumber;
@@ -47,8 +48,9 @@ private:
     void initialize(SystemBuilder::AvailableSystems type);
 
     // Display utility
-    void preDisplay3D(void);
-    void postDisplay(void);
+    void preDisplay2D();
+    void preDisplay3D();
+    void postDisplay();
 };
 
 #endif //PARTICLETOY_VIEW_H

@@ -19,7 +19,7 @@ void CircularWireConstraint::draw()
     for (int i=0; i < 360; i=i+18)
     {
         float degInRad = i * M_PI / 180.0f;
-        glVertex3f(center[0]+cos(degInRad)*radius,center[1]+sin(degInRad)*radius, 0);
+        glVertex3f(center[0]+cos(degInRad)*radius,center[1]+sin(degInRad)*radius, center[2]);
     }
     glEnd();
 

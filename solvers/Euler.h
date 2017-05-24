@@ -11,6 +11,12 @@
 class Euler : public Solver {
 public:
     void simulateStep(System* system, float h) override;
+
+    enum TYPE {
+        EXPLICIT,
+        IMPLICIT,
+        SEMI
+    };
 };
 
 

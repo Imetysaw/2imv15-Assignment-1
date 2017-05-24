@@ -36,7 +36,7 @@ void keypressCallback(unsigned char k, int x, int y) {
 }
 
 View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), frameNumber(0), dt(dt), N(N) {
+        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
     glutInitWindowPosition ( 0, 0 );
@@ -82,7 +82,17 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->free ();
             exit ( 0 );
             break;
-
+        case '=':
+            dt += 0.01f;
+            printf("Increase dt: %f\n", dt);
+            break;
+        case '-':
+            dt -= 0.01f;
+            printf("Decrease dt: %f\n", dt);
+            break;
+        case 'p':
+            drawUtil = !drawUtil;
+            break;
         case ' ':
             isSimulating = !isSimulating;
             if(isSimulating)
@@ -165,8 +175,9 @@ void View::onReshape(int width, int height )
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glTranslatef(0.0f, .5f, -1.5f);
 
-    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+    gluPerspective(90.0f, aspect, 0.1f, 100.0f);
 
     this->width = width;
     this->height = height;
@@ -186,7 +197,9 @@ void View::onDisplay()
     preDisplay3D ();
 
     if (sys != NULL)
-        sys->draw();
+        sys->draw(drawUtil);
+
+//    preDisplay2D();
 
     postDisplay ();
 }
@@ -201,6 +214,17 @@ void View::preDisplay3D()
     glRotatef(20, 1.0f, 0.0f, 0.0f);
     glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
     camAngle+=0.5f;
+}
+
+void View::preDisplay2D()
+{
+    //Set ortho view
+//    glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
+//    glLoadIdentity(); // Clear the matrix
+//    glOrtho(-9.0, 9.0, -9.0, 9.0, 0.0, 30.0); // Setup an Ortho view
+//    glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
+//    glLoadIdentity(); // Clear the model matrix
+
 }
 
 void View::postDisplay()

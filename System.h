@@ -16,7 +16,7 @@ using namespace Eigen;
 class Solver;
 class System {
 private:
-    void drawParticles();
+    void drawParticles(bool drawUtil);
     void drawForces();
     void drawConstraints();
 
@@ -41,13 +41,14 @@ public:
     VectorXf computeDerivative();
     VectorXf getState();
     float getTime();
+    void setState(VectorXf src);
     void setState(VectorXf newState, float time);
     unsigned long getDim();
 
     void step(float dt);
     void free();
     void reset();
-    void draw();
+    void draw(bool drawUtil = false);
 };
 
 

@@ -8,6 +8,7 @@
 
 #include "System.h"
 #include "SystemBuilder.h"
+#include "forces/DirectionalForce.h"
 
 class View {
 public:
@@ -40,10 +41,11 @@ private:
     int mouse_down[3];
     int mouse_release[3];
     int mouse_shiftclick[3];
-    Force* mouseDragForce;
+    DirectionalForce* mouseDragForce;
     Force* windForce;
 
     Particle* mouseDragParticle;
+
 
     void getFromGUI();
     void remapGUI();

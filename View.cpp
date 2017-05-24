@@ -131,7 +131,7 @@ void View::onMouseEvent( int button, int state, int x, int y )
 
     //Reset force on mouse up
     if(state == GLUT_UP){
-        mouseDragForce = new DirectionalForce({mouseDragParticle}, Vec3f(0, 0, 0.0f));
+        mouseDragForce->setActive(false);
     } else {
         //get world coordinates of click point
         GLdouble modelMatrix[16];
@@ -148,7 +148,7 @@ void View::onMouseEvent( int button, int state, int x, int y )
             gluProject(position[0], position[1], position[2], modelMatrix, projectionMatrix, viewMatrix,
                        &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
             double distance = abs(x - screenCoordinates[0]) + abs(y - (height - screenCoordinates[1]));
-            //printf("%f\n",screenCoordinates[2]);
+            printf("%f\n",screenCoordinates[2]);
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestParticle = sys->particles[i];
@@ -172,12 +172,17 @@ void View::onMotionEvent( int x, int y )
     glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
     GLint viewMatrix[4];
     glGetIntegerv(GL_VIEWPORT, viewMatrix);
+    double screenCoordinates[3];
+    Particle* midParticle = sys->particles[sys->particles.size()/2];
+    gluProject(midParticle->position[0], midParticle->position[1], midParticle->position[2], modelMatrix, projectionMatrix, viewMatrix,
+               &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
+    float z = screenCoordinates[2];
     double objCoordinates[3];
-    gluUnProject(x, height - y, 0.975, modelMatrix, projectionMatrix, viewMatrix, &objCoordinates[0],
+    gluUnProject(x, height - y, z, modelMatrix, projectionMatrix, viewMatrix, &objCoordinates[0],
                  &objCoordinates[1], &objCoordinates[2]);
     Vec3f position = mouseDragParticle->position;
-    printf("Updatig da forcezzzz");
-    mouseDragForce = new DirectionalForce({mouseDragParticle}, Vec3f(0.0f, 0.0f, -0.2f));
+    mouseDragForce->direction = Vec3f((objCoordinates[0] - position[0])*6.5f, (objCoordinates[1] - position[1])*6.5f,
+                                      (objCoordinates[2] - position[2])*6.5f);
 }
 
 void View::onReshape(int width, int height )

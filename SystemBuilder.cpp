@@ -50,7 +50,7 @@ System* SystemBuilder::initCloth() {
     System* sys = new System(new Euler());
 
     const int xSize = 10, ySize = 26;
-    const float deltaX = 1.0f/xSize, deltaY = 1.0f/ySize;
+    const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
 
     // Initialize particles
     for (int y = 0; y < ySize; y++) {
@@ -60,12 +60,11 @@ System* SystemBuilder::initCloth() {
     }
 
     // Add gravity and drag to all particles
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.01f)));
-    sys->addForce(new DragForce(sys->particles, 0.1f));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
+    sys->addForce(new DragForce(sys->particles, 0.5f));
 
-    float spr = 0.6;
-    float dmp = 0.5;
+    float spr = 120.0f;
+    float dmp = 1.5f;
 
     for (int y = 0; y < ySize; y++) {
         for (int x = 0; x < xSize - 1; x++) {
@@ -101,8 +100,16 @@ System* SystemBuilder::initCloth() {
         }
     }
 
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], Vec3f(-0.5f, 0.6f, 0), 0.1f, {0}));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1], Vec3f(0.45f, 0.6f, 0), 0.1f, {xSize-1}));
+//    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
+//                                                  sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
+//                                                  0.05f, {0}));
+    float r = 0.05f;
+    sys->addConstraint(new CircularWireConstraint(sys->particles[ySize/2 * xSize],
+                                                  sys->particles[ySize/2 * xSize]->startPos + Vec3f(-r, 0.f, 0.f),
+                                                  r, {ySize/2 * xSize}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
+                                                  sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
+                                                  r, {xSize-1}));
     return sys;
 }
 

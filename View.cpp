@@ -130,8 +130,9 @@ void View::onReshape(int width, int height )
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glTranslatef(0.0f, .5f, -1.5f);
 
-    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+    gluPerspective(90.0f, aspect, 0.1f, 100.0f);
 
     this->width = width;
     this->height = height;
@@ -153,7 +154,7 @@ void View::onDisplay()
     if (sys != NULL)
         sys->draw(drawUtil);
 
-    preDisplay2D();
+//    preDisplay2D();
 
     postDisplay ();
 }

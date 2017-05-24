@@ -88,6 +88,7 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
 
     // Initialize CG method
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
+//    cg.setTolerance(0.001f);
 
     // Compute lambda
     cg.compute(JWJt);

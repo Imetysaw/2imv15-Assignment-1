@@ -93,6 +93,15 @@ void View::onKeyPress ( unsigned char key, int x, int y )
         case 'p':
             drawUtil = !drawUtil;
             break;
+        case ',':
+            rotate = 1;
+            break;
+        case '.':
+            rotate = -1;
+            break;
+        case '/':
+            rotate = 0;
+            break;
         case ' ':
             isSimulating = !isSimulating;
             if(isSimulating)
@@ -213,7 +222,10 @@ void View::preDisplay3D()
     glTranslatef(0.0f, 0.0f, -4.0f);
     glRotatef(20, 1.0f, 0.0f, 0.0f);
     glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
-    camAngle+=0.5f;
+
+    if (rotate != 0) {
+        camAngle += rotate * 0.5f;
+    }
 }
 
 void View::preDisplay2D()

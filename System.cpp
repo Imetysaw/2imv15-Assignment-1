@@ -6,6 +6,12 @@
 #include "solvers/Solver.h"
 #include "solvers/ConstraintSolver.h"
 
+#if defined(_WIN32) || defined(WIN32)
+#include <GL/glut.h>
+#else
+#include <GLUT/glut.h>
+#endif
+
 System::System(Solver* solver) : solver(solver), time(0.0f) {}
 
 /**
@@ -110,7 +116,7 @@ float System::getTime() {
 VectorXf System::derivEval() {
     clearForces();
     computeForces();
-    ConstraintSolver::solve(this, 150.5f, .5f);
+    ConstraintSolver::solve(this, 100.0f, 10.0f);
     return computeDerivative();
 }
 

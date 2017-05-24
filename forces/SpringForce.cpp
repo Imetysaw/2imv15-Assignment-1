@@ -38,9 +38,9 @@ void SpringForce::apply()
 void SpringForce::draw()
 {
   glBegin( GL_LINES );
-  glColor3f(0.6, 0.7, 0.8);
+  glColor3f(0.8, 0.8, 0.8);
   glVertex3f( particles[0]->position[0], particles[0]->position[1], particles[0]->position[2] );
-  glColor3f(0.6, 0.7, 0.8);
+  glColor3f(0.6, 0.6, 0.6);
   glVertex3f( particles[1]->position[0], particles[1]->position[1], particles[1]->position[2] );
   glEnd();
 }

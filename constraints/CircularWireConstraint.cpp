@@ -15,7 +15,7 @@ CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec3f & center
 void CircularWireConstraint::draw()
 {
     glBegin(GL_LINE_LOOP);
-    glColor3f(0.0,1.0,0.0);
+    glColor3f(0.0,0.7,0.0);
     for (int i=0; i < 360; i=i+18)
     {
         float degInRad = i * M_PI / 180.0f;
@@ -24,7 +24,7 @@ void CircularWireConstraint::draw()
     glEnd();
 
     glBegin(GL_LINES);
-    glColor3f(1.0,1.0,0.0);
+    glColor3f(0.7,0.7,0.0);
         glVertex3f(particle->position[0], particle->position[1], particle->position[2]);
         glVertex3f(center[0], center[1], center[2]);
     glEnd();

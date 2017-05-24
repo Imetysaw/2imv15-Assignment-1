@@ -32,6 +32,7 @@ private:
     bool dumpFrames;
     bool drawUtil;
     bool isSimulating;
+    int rotate = 0;
     int N;
     int frameNumber;
     float dt;

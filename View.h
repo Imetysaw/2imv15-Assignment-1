@@ -27,6 +27,7 @@ private:
     System* sys = NULL;
     int id;
     int mx, my, omx, omy, hmx, hmy;
+    int initialMx, initialMy;
     int width, height;
     bool dumpFrames;
     bool isSimulating;
@@ -37,6 +38,9 @@ private:
     int mouse_down[3];
     int mouse_release[3];
     int mouse_shiftclick[3];
+    Force* mouseDragForce;
+
+    Particle* mouseDragParticle;
 
     void getFromGUI();
     void remapGUI();

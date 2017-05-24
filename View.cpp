@@ -4,6 +4,7 @@
 
 #include "View.h"
 #include "imageio.h"
+#include "forces/DirectionalForce.h"
 
 #if defined(__CYGWIN__) || defined(WIN32)
 #include <GL/glut.h>
@@ -92,19 +93,64 @@ void View::onKeyPress ( unsigned char key, int x, int y )
 
 void View::onMouseEvent( int button, int state, int x, int y )
 {
-    omx = mx = x;
-    omx = my = y;
+    initialMx = omx = mx = x;
+    initialMy = omx = my = y;
 
     if(!mouse_down[0]){hmx=x; hmy=y;}
     if(mouse_down[button]) mouse_release[button] = state == GLUT_UP;
     if(mouse_down[button]) mouse_shiftclick[button] = glutGetModifiers()==GLUT_ACTIVE_SHIFT;
     mouse_down[button] = state == GLUT_DOWN;
+    printf("x: %d, y: %d, width: %d \n", x, y, width);
+
+    //Reset force on mouse up
+    if(state == GLUT_UP){
+        mouseDragForce = new DirectionalForce({mouseDragParticle}, Vec3f(0, 0, 0.0f));
+    } else {
+        //get world coordinates of click point
+        GLdouble modelMatrix[16];
+        glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+        GLdouble projectionMatrix[16];
+        glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
+        GLint viewMatrix[4];
+        glGetIntegerv(GL_VIEWPORT, viewMatrix);
+        Particle *closestParticle;
+        double closestDistance = 10000000;
+        for (int i = 0; i < sys->particles.size(); i++) {
+            Vec3f position = sys->particles[i]->position;
+            double screenCoordinates[3];
+            gluProject(position[0], position[1], position[2], modelMatrix, projectionMatrix, viewMatrix,
+                       &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
+            double distance = abs(x - screenCoordinates[0]) + abs(y - (height - screenCoordinates[1]));
+            //printf("%f\n",screenCoordinates[2]);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestParticle = sys->particles[i];
+            }
+        }
+        //update mouseDragParticle
+        mouseDragParticle = closestParticle;
+        //update the current mousedragforce
+        mouseDragForce = new DirectionalForce({mouseDragParticle}, Vec3f(0, 0, 0.0f));
+        sys->addForce(mouseDragForce);
+    }
 }
 
 void View::onMotionEvent( int x, int y )
 {
     this->mx = x;
     this->my = y;
+    GLdouble modelMatrix[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+    GLdouble projectionMatrix[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
+    GLint viewMatrix[4];
+    glGetIntegerv(GL_VIEWPORT, viewMatrix);
+    double objCoordinates[3];
+    gluUnProject(x, height - y, 0.975, modelMatrix, projectionMatrix, viewMatrix, &objCoordinates[0],
+                 &objCoordinates[1], &objCoordinates[2]);
+    Vec3f position = mouseDragParticle->position;
+    printf("Updatig da forcezzzz");
+    mouseDragForce = new DirectionalForce({mouseDragParticle}, Vec3f(0.0f, 0.0f, -0.2f));
 }
 
 void View::onReshape(int width, int height )

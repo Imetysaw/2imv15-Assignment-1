@@ -39,7 +39,7 @@ int main ( int argc, char ** argv )
 	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
 
-	View v(768, 512, dt, SystemBuilder::BASIC, N);
+	View v(768, 512, dt, SystemBuilder::CLOTH, N);
 
 	exit ( 0 );
 }

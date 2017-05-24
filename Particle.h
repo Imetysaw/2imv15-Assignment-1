@@ -10,7 +10,7 @@ public:
 	virtual ~Particle(void);
 
 	void reset();
-	void draw();
+	void draw(bool drawUtil = false);
 
 	Vec3f startPos;
 	Vec3f position;

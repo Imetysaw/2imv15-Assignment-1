@@ -29,6 +29,7 @@ private:
     int mx, my, omx, omy, hmx, hmy;
     int width, height;
     bool dumpFrames;
+    bool drawUtil;
     bool isSimulating;
     int N;
     int frameNumber;

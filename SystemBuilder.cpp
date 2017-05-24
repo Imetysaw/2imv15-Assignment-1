@@ -47,7 +47,7 @@ System* SystemBuilder::initBasic()
 }
 
 System* SystemBuilder::initCloth() {
-    System* sys = new System(new RungeKutta());
+    System* sys = new System(new Euler());
 
     const int xSize = 10, ySize = 26;
     const float deltaX = 1.0f/xSize, deltaY = 1.0f/ySize;
@@ -55,14 +55,14 @@ System* SystemBuilder::initCloth() {
     // Initialize particles
     for (int y = 0; y < ySize; y++) {
         for (int x = 0; x < xSize; x++) {
-            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, 0.0f), 0.2f));
+            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, deltaY * y), 0.2f));
         }
     }
 
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -0.0098f, 0)));
-    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.1f)));
-    sys->addForce(new DragForce(sys->particles, 0.5f));
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, 0, -0.01f)));
+    sys->addForce(new DragForce(sys->particles, 0.1f));
 
     float spr = 0.6;
     float dmp = 0.5;

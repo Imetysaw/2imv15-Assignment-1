@@ -57,9 +57,9 @@ void System::reset()
 /**
  * Draws the forces
  */
-void System::draw()
+void System::draw(bool drawUtil)
 {
-    drawParticles();
+    drawParticles(drawUtil);
     drawForces();
     drawConstraints();
 }
@@ -110,7 +110,7 @@ float System::getTime() {
 VectorXf System::derivEval() {
     clearForces();
     computeForces();
-    ConstraintSolver::solve(this, 60.0f, 50.0f);
+    ConstraintSolver::solve(this, 5.0f, 5.0f);
     return computeDerivative();
 }
 
@@ -162,11 +162,11 @@ VectorXf System::computeDerivative()
     return dst;
 }
 
-void System::drawParticles()
+void System::drawParticles(bool drawUtil)
 {
     for(Particle* p : particles)
     {
-        p->draw();
+        p->draw(drawUtil);
     }
 }
 

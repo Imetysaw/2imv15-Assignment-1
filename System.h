@@ -16,7 +16,7 @@ using namespace Eigen;
 class Solver;
 class System {
 private:
-    void drawParticles();
+    void drawParticles(bool drawUtil);
     void drawForces();
     void drawConstraints();
 
@@ -48,7 +48,7 @@ public:
     void step(float dt);
     void free();
     void reset();
-    void draw();
+    void draw(bool drawUtil = false);
 };
 
 

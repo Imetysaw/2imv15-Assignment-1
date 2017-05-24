@@ -20,7 +20,7 @@ void Particle::reset()
     velocity = Vec3f(0.0, 0.0, 0.0);
     force = Vec3f(0.0, 0.0, 0.0);
 }
-void Particle::draw()
+void Particle::draw(bool drawUtil)
 {
 	const float h = .1f;
 	glColor3f(1.f, 1.f, 1.f);
@@ -30,15 +30,17 @@ void Particle::draw()
 	glEnd();
 
 
-    glColor3f(0.0, 0.7, 0.0);
-    glBegin(GL_LINES);
-    glVertex3f(position[0], position[1], position[2]);
-    glVertex3f(position[0] + velocity[0], position[1] + velocity[1], position[2] + velocity[2]);
-    glEnd();
+    if (drawUtil) {
+        glColor3f(0.0, 0.7, 0.0);
+        glBegin(GL_LINES);
+        glVertex3f(position[0], position[1], position[2]);
+        glVertex3f(position[0] + velocity[0], position[1] + velocity[1], position[2] + velocity[2]);
+        glEnd();
 
-    glColor3f(0.0, 0.6, 0.6);
-    glBegin(GL_LINES);
-    glVertex3f(position[0], position[1], position[2]);
-    glVertex3f(position[0] + force[0], position[1] + force[1], position[2] + force[2]);
-    glEnd();
+        glColor3f(0.0, 0.6, 0.6);
+        glBegin(GL_LINES);
+        glVertex3f(position[0], position[1], position[2]);
+        glVertex3f(position[0] + force[0], position[1] + force[1], position[2] + force[2]);
+        glEnd();
+    }
 }

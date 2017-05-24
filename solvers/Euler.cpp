@@ -22,7 +22,7 @@ void Euler::simulateStep(System* system, float h) {
 
     if (type == SEMI) {
         // If we are running semi implicit euler, use the new velocity instead
-        VectorXf semiImpl;
+        VectorXf semiImpl(system->getDim());
         for (int i = 0; i < newState.size(); i += 6) {
             semiImpl[i + 0] = oldState[i + 0] + h * newState[i + 3];  // Xnew implicit, using Vnew
             semiImpl[i + 1] = oldState[i + 1] + h * newState[i + 4];  // Xold + h * Vnew

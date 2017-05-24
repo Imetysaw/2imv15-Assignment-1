@@ -81,7 +81,14 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->free ();
             exit ( 0 );
             break;
-
+        case '=':
+            dt += 0.01f;
+            printf("Increase dt: %f\n", dt);
+            break;
+        case '-':
+            dt -= 0.01f;
+            printf("Decrease dt: %f\n", dt);
+            break;
         case ' ':
             isSimulating = !isSimulating;
             if(isSimulating)
@@ -92,6 +99,7 @@ void View::onKeyPress ( unsigned char key, int x, int y )
 
 void View::onMouseEvent( int button, int state, int x, int y )
 {
+    printf("B: %i S: %i @ %i %i\n", button, state, x, y);
     omx = mx = x;
     omx = my = y;
 
@@ -142,6 +150,8 @@ void View::onDisplay()
     if (sys != NULL)
         sys->draw();
 
+    preDisplay2D();
+
     postDisplay ();
 }
 
@@ -155,6 +165,17 @@ void View::preDisplay3D()
     glRotatef(20, 1.0f, 0.0f, 0.0f);
     glRotatef(camAngle, 0.0f, 1.0f, 0.0f);
     camAngle+=0.5f;
+}
+
+void View::preDisplay2D()
+{
+    //Set ortho view
+//    glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
+//    glLoadIdentity(); // Clear the matrix
+//    glOrtho(-9.0, 9.0, -9.0, 9.0, 0.0, 30.0); // Setup an Ortho view
+//    glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
+//    glLoadIdentity(); // Clear the model matrix
+
 }
 
 void View::postDisplay()

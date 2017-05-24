@@ -41,6 +41,7 @@ public:
     VectorXf computeDerivative();
     VectorXf getState();
     float getTime();
+    void setState(VectorXf src);
     void setState(VectorXf newState, float time);
     unsigned long getDim();
 

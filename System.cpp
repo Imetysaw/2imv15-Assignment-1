@@ -114,6 +114,10 @@ VectorXf System::derivEval() {
     return computeDerivative();
 }
 
+void System::setState(VectorXf src) {
+    this->setState(src, this->getTime());
+}
+
 void System::setState(VectorXf src, float t)
 {
     for(int i=0; i < particles.size(); i++){

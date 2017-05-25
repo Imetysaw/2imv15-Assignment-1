@@ -62,6 +62,6 @@ void Euler::implicit(System *sys, float h) {
     A = M - h*h*jx; //- h * jv;
 
 
-    ConjugateGradient cg;
+    //ConjugateGradient cg;
 
 }

@@ -185,7 +185,7 @@ void System::drawParticles(bool drawUtil)
 //            float s = n * lx;
 //            if (s < 0) s = 0;
 //            if (s > 1) s = 1;
-            s = .7f;
+            float s = .7f;
             glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
             //draw front
             glNormal3f(n[0], n[1], n[2]);

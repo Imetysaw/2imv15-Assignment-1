@@ -7,7 +7,7 @@
 class AngularSpringForce : public Force {
 
 public:
-    AngularSpringForce(Particle *p1, Particle * p2, float dist, float ks, float kd);
+    AngularSpringForce(Particle *p1, Particle * p2, Particle * p3, float dist, float ks, float kd);
     AngularSpringForce(std::vector<Particle*> particles, float dist, float ks, float kd);
 
     void draw() override;

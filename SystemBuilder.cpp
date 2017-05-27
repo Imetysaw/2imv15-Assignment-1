@@ -11,6 +11,7 @@
 #include "constraints/CircularWireConstraint.h"
 #include "constraints/RodConstraint.h"
 #include "solvers/RungeKutta.h"
+#include "forces/AngularSpringForce.h"
 
 System* SystemBuilder::get(AvailableSystems s) {
     switch (s) {
@@ -121,23 +122,50 @@ System* SystemBuilder::initCloth() {
 
 
 System* SystemBuilder::initHair() {
-    System* sys = new System(new Euler());
+    System* sys = new System(new RungeKutta());
 
-    float particleDist = 0.01;
-    int parCount = 50;
+    const int xSize = 1, ySize = 40;
+    const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
 
-    for (int i = 0; i < parCount; i++) {
-        sys->addParticle(new Particle(Vec3f(0.0f, -i * particleDist / 2, 0.0f), 0.2f));
+    // Initialize particles
+    for (int y = 0; y < ySize; y++) {
+        for (int x = 0; x < xSize; x++) {
+            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, deltaY * y), 0.2f));
+        }
     }
 
-    for (int i = 0; i < parCount - 1; i++) {
-        sys->addForce(new SpringForce(
-                sys->particles[i],
-                sys->particles[i + 1],
-                particleDist, 0.1f, 0.1f
-        ));
+    // Add gravity and drag to all particles
+    sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
+    sys->addForce(new DragForce(sys->particles, 0.5f));
+
+    float spr = 120.0f;
+    float dmp = 1.5f;
+
+
+    for (int y = 0; y < ySize - 1; y++) {
+            sys->addForce(new SpringForce(sys->particles[y],
+                                          sys->particles[y+1],
+                                          deltaY, spr, dmp));
     }
 
+    for (int y = 2; y < ySize - 2; y++) {
+        for (int x = 0; x < xSize; x++) {
+            sys->addForce(new AngularSpringForce(sys->particles[x + y * xSize],
+                                                 sys->particles[x + (y + 1) * xSize],
+                                                 sys->particles[x + (y + 2) * xSize],
+                                                 0.3f, 2.0f, dmp));
+        }
+    }
 
+//    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
+//                                                  sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
+//                                                  0.05f, {0}));
+    float r = 0.05f;
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], //ySize/2 * xSize],
+                                                  sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
+                                                  r, {0}));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
+                                                  sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
+                                                  r, {xSize-1}));
     return sys;
 }

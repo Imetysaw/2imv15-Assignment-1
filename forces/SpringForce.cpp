@@ -47,5 +47,5 @@ void SpringForce::draw()
 
 MatrixXf SpringForce::jx() {
     MatrixXf jx = MatrixXf::Zero(particles.size(), particles.size());
-    return Eigen::MatrixXf();
+    return jx;
 }

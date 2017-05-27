@@ -3,9 +3,9 @@
 #include "../Particle.h"
 #include "Constraint.h"
 
-class RodConstraint : public Constraint{
+class RodConstraint : public Constraint {
 public:
-    RodConstraint(Particle *p1, Particle * p2, float dist, vector<int> indices);
+    RodConstraint(Particle *p1, Particle * p2, float dist);
 
     void draw() override;
 

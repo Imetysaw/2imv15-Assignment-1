@@ -33,12 +33,12 @@ System* SystemBuilder::initBasic()
     const Vec3f center(0.0, 0.0, 0.0);
     const Vec3f offset(dist, 0.0, 0.0);
 
-    sys->addParticle(new Particle(center + offset, 1.0f));
-    sys->addParticle(new Particle(center + offset * 2, 1.0f));
-    sys->addParticle(new Particle(center + offset * 3, 1.0f));
-    sys->addParticle(new Particle(center + offset * 3, 1.0f));
-    sys->addParticle(new Particle(center + offset * 4, 1.0f));
-    sys->addParticle(new Particle(center + offset * 4, 1.0f));
+    sys->addParticle(new Particle(center + offset, 1.0f, 0));
+    sys->addParticle(new Particle(center + offset * 2, 1.0f, 1));
+    sys->addParticle(new Particle(center + offset * 3, 1.0f, 2));
+    sys->addParticle(new Particle(center + offset * 3, 1.0f, 3));
+    sys->addParticle(new Particle(center + offset * 4, 1.0f, 4));
+    sys->addParticle(new Particle(center + offset * 4, 1.0f, 5));
 
     sys->addForce(new DragForce(sys->particles, 0.5f));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
@@ -46,9 +46,9 @@ System* SystemBuilder::initBasic()
     sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 50.f, 1.5f));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
 
-    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist, {1, 2}));
-    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist, {1, 3}));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist, {0}));
+    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 
     return sys;
 }
@@ -58,11 +58,12 @@ System* SystemBuilder::initCloth() {
 
     const int xSize = 10, ySize = 26;
     const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
-
+    int pindex = 0;
     // Initialize particles
     for (int y = 0; y < ySize; y++) {
         for (int x = 0; x < xSize; x++) {
-            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, deltaY * y), 0.2f));
+            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, deltaY * y), 0.2f, pindex));
+            pindex++;
         }
     }
 
@@ -113,10 +114,10 @@ System* SystemBuilder::initCloth() {
     float r = 0.05f;
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], //ySize/2 * xSize],
                                                   sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
-                                                  r, {0}));
+                                                  r));
     sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
                                                   sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
-                                                  r, {xSize-1}));
+                                                  r));
     return sys;
 }
 
@@ -124,14 +125,12 @@ System* SystemBuilder::initCloth() {
 System* SystemBuilder::initHair() {
     System* sys = new System(new RungeKutta());
 
-    const int xSize = 1, ySize = 40;
-    const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
+    const int ySize = 40;
+    const float deltaY = 3.0f/ySize;
 
     // Initialize particles
     for (int y = 0; y < ySize; y++) {
-        for (int x = 0; x < xSize; x++) {
-            sys->addParticle(new Particle(Vec3f(-0.5f + x * deltaX, 0.5f - y * deltaY, deltaY * y), 0.2f));
-        }
+            sys->addParticle(new Particle(Vec3f(-0.5f, 0.5f - y * deltaY, deltaY * y), 0.2f, y));
     }
 
     // Add gravity and drag to all particles
@@ -149,12 +148,10 @@ System* SystemBuilder::initHair() {
     }
 
     for (int y = 2; y < ySize - 2; y++) {
-        for (int x = 0; x < xSize; x++) {
-            sys->addForce(new AngularSpringForce(sys->particles[x + y * xSize],
-                                                 sys->particles[x + (y + 1) * xSize],
-                                                 sys->particles[x + (y + 2) * xSize],
+            sys->addForce(new AngularSpringForce(sys->particles[y],
+                                                 sys->particles[y + 1],
+                                                 sys->particles[y + 2],
                                                  0.3f, 2.0f, dmp));
-        }
     }
 
 //    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
@@ -163,9 +160,6 @@ System* SystemBuilder::initHair() {
     float r = 0.05f;
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], //ySize/2 * xSize],
                                                   sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
-                                                  r, {0}));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
-                                                  sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
-                                                  r, {xSize-1}));
+                                                  r));
     return sys;
 }

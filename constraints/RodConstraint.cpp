@@ -6,9 +6,8 @@
 #include <GLUT/glut.h>
 #endif
 
-RodConstraint::RodConstraint(Particle *p1, Particle * p2, float dist, vector<int> indices) :
-  Constraint(indices), p1(p1), p2(p2), dist(dist) {}
-
+RodConstraint::RodConstraint(Particle *p1, Particle * p2, float dist) :
+  Constraint({p1, p2}), p1(p1), p2(p2), dist(dist) {}
 
 float RodConstraint::C() {
   Vec3f delta = p1->position - p2->position;

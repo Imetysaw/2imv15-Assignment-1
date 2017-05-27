@@ -62,11 +62,11 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
         Cd[i] = c->Cd();
         vector<Vec3f> j = c->j();
         vector<Vec3f> jd = c->jd();
-        vector<int> pIndices = c->indices();
+        vector<Particle*> afParticles = c->affects();
 
         // Fill the matrices at the correct particle positions
-        for (int k = 0; k < pIndices.size(); k++) {
-            int pIndex = pIndices[k] * dimensions;
+        for (int k = 0; k < afParticles.size(); k++) {
+            int pIndex = afParticles[k]->index * dimensions;
             for (int d = 0; d < dimensions; d++) {
                 Jd(i, pIndex + d) = jd[k][d];
                 J(i, pIndex + d) = j[k][d];

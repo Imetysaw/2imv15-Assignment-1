@@ -45,23 +45,54 @@ void Euler::simulateStep(System* system, float h) {
 }
 
 void Euler::implicit(System *sys, float h) {
-    MatrixXf A;
-    VectorXf b;
+    // Get old state
+    VectorXf oldState = sys->getState();
+
+    // Fill mass matrix
     MatrixXf M = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
 
     for (int i = 0; i < sys->particles.size(); i++) {
         M(i,i) = sys->particles[i]->mass;
     }
 
+    // Compute Jx
     MatrixXf jx = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
     for (Force* f : sys->forces) {
         jx += f->jx();
-//        jv += f->jv();
     }
 
-    A = M - h*h*jx; //- h * jv;
+    // Get fold and vold
+    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
+    VectorXf vold = VectorXf::Zero(sys->getDim()/2);
+    for (int i = 0; i < sys->particles.size() * 3; i+= 3) {
+        Particle* p = sys->particles[i];
+        fold[i + 0] = p->force[i + 0];
+        fold[i + 1] = p->force[i + 1];
+        fold[i + 2] = p->force[i + 2];
+        vold[i + 0] = p->velocity[i + 0];
+        vold[i + 1] = p->velocity[i + 1];
+        vold[i + 2] = p->velocity[i + 2];
+    }
 
 
-    //ConjugateGradient cg;
+    // Compute A
+    MatrixXf A = M - h * h * jx; //- h * jv;
+    VectorXf b = h * ( fold + h * jx * vold );
 
+    // Solve for dy
+    ConjugateGradient<MatrixXf, Lower|Upper> cg;
+    cg.compute(A);
+    VectorXf dy = cg.solve(b);
+
+    // Set new state
+    VectorXf newState = VectorXf(sys->getDim());
+    for (int i = 0; i < dy.size(); i+=3) {
+        newState[i + 0] = oldState[i + 0] + dy[3] * h;
+        newState[i + 1] = oldState[i + 1] + dy[4] * h;
+        newState[i + 2] = oldState[i + 2] + dy[5] * h;
+        newState[i + 3] = dy[3];
+        newState[i + 4] = dy[4];
+        newState[i + 5] = dy[5];
+    }
+    sys->setState(newState);
 }

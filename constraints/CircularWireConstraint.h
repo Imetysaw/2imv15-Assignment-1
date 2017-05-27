@@ -9,7 +9,7 @@ using namespace std;
 
 class CircularWireConstraint : public Constraint {
 public:
-    CircularWireConstraint(Particle *p, const Vec3f & center, const float radius, const vector<int> indices);
+    CircularWireConstraint(Particle *p, const Vec3f & center, const float radius);
 
     void draw() override;
 

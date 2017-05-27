@@ -63,11 +63,12 @@ void System::reset()
 /**
  * Draws the forces
  */
-void System::draw(bool drawUtil)
-{
+void System::draw(bool drawUtil) {
     drawParticles(drawUtil);
-    drawForces();
-    drawConstraints();
+    if (drawUtil) {
+        drawForces();
+        drawConstraints();
+    }
 }
 
 /**
@@ -182,11 +183,7 @@ void System::drawParticles(bool drawUtil)
             Vec3f d2 = particles[x]->position - particles[x + dx]->position;
 
             Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
-//            float s = n * lx;
-//            if (s < 0) s = 0;
-//            if (s > 1) s = 1;
-            float s = .7f;
-            glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
+            glColor3f(0.7f, 1.0f, 0.8f);
             //draw front
             glNormal3f(n[0], n[1], n[2]);
             glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
@@ -205,11 +202,7 @@ void System::drawParticles(bool drawUtil)
             d2 = particles[x]->position - particles[x + dx + 1]->position;
 
             n = - (cross(d1, d2) / norm(cross(d1, d2)));
-//            s = n * lx;
-//            if (s < 0) s = 0;
-//            if (s > 1) s = 1;
-            s = .7f;
-            glColor3f(s * 0.7f, s * 1.0f, s * 0.8f);
+            glColor3f(0.7f, 1.0f, 0.8f);
             //draw front
             glNormal3f(n[0], n[1], n[2]);
             glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
@@ -237,7 +230,7 @@ void System::drawForces()
 {
     for(Force* f : forces)
     {
-//        f->draw();
+        f->draw();
     }
 }
 

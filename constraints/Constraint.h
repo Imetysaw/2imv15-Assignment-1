@@ -11,7 +11,7 @@ using namespace std;
 
 class Constraint {
 public:
-    Constraint(vector<int> indices): pIndices(indices) {}
+    Constraint(vector<Particle*> particles) : particles(particles) {}
     virtual void draw() = 0;
 
     virtual float C() = 0;
@@ -19,9 +19,9 @@ public:
     virtual vector<Vec3f> j() = 0;
     virtual vector<Vec3f> jd() = 0;
 
-    vector<int> indices() { return pIndices; };
-private:
-    vector<int> pIndices;
+    vector<Particle*> affects() { return particles; };
+protected:
+    vector<Particle*> particles;
 };
 
 

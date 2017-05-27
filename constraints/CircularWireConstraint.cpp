@@ -8,8 +8,8 @@
 
 
 CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec3f & center,
-                                               const float radius, const vector<int> indices) :
-        Constraint(indices), particle(p), center(center), radius(radius) {}
+                                               const float radius) :
+        Constraint({p}), particle(p), center(center), radius(radius) {}
 
 
 void CircularWireConstraint::draw()

@@ -39,7 +39,8 @@ int main ( int argc, char ** argv )
 //	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
 	printf ( "\t Decrease/increase time step by pressing the '-' abd '=' keys\n" );
-	printf ( "\t Show detailed info by pressing the '[' key\n" );
+    printf ( "\t Show detailed info by pressing the 'p' key\n" );
+    printf ( "\t Toggle global directional force using the  '[' key\n" );
 	printf ( "\t Click on a particle and drag the mouse to apply force\n" );
 	printf ( "\t Use ',' '.' and '/' to rotate.\n" );
 

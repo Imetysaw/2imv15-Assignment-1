@@ -45,6 +45,13 @@ void AngularSpringForce::apply() {
 }
 
 void AngularSpringForce::draw() {
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 1.0f, 0.0f);
+        glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
+        glVertex3f(particles[1]->position[0], particles[1]->position[1], particles[1]->position[2]);
+        glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
+        glVertex3f(particles[2]->position[0], particles[2]->position[1], particles[2]->position[2]);
+    glEnd();
 }
 
 map<int, map<int, float>> AngularSpringForce::jx() {

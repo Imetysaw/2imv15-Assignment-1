@@ -15,12 +15,19 @@
 
 System* SystemBuilder::get(AvailableSystems s) {
     switch (s) {
+        System* sys;
         case BASIC:
-            return initBasic();
+            sys = initBasic();
+            sys->type = BASIC;
+            return sys;
         case CLOTH:
-            return initCloth();
+            sys = initCloth();
+            sys->type = CLOTH;
+            return sys;
         case HAIR:
-            return initHair();
+            sys = initHair();
+            sys->type = HAIR;
+            return sys;
     }
     return NULL;
 }
@@ -125,7 +132,7 @@ System* SystemBuilder::initCloth() {
 System* SystemBuilder::initHair() {
     System* sys = new System(new RungeKutta());
 
-    const int ySize = 40;
+    const int ySize = 20;
     const float deltaY = 3.0f/ySize;
 
     // Initialize particles
@@ -151,7 +158,7 @@ System* SystemBuilder::initHair() {
             sys->addForce(new AngularSpringForce(sys->particles[y],
                                                  sys->particles[y + 1],
                                                  sys->particles[y + 2],
-                                                 0.3f, 2.0f, dmp));
+                                                 0.7f, 1.0f, dmp));
     }
 
 //    sys->addConstraint(new CircularWireConstraint(sys->particles[0],

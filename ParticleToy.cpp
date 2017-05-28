@@ -45,7 +45,7 @@ int main ( int argc, char ** argv )
 	printf ( "\t Click on a particle and drag the mouse to apply force\n" );
 	printf ( "\t Use ',' '.' and '/' to rotate.\n" );
 
-	View v(768, 512, dt, SystemBuilder::CLOTH, N);
+	View v(768, 512, dt, SystemBuilder::HAIR, N);
 
 	exit ( 0 );
 }

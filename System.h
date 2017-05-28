@@ -10,6 +10,7 @@
 #include "Particle.h"
 #include "constraints/Constraint.h"
 #include "forces/Force.h"
+#include "SystemBuilder.h"
 
 using namespace Eigen;
 
@@ -33,6 +34,7 @@ public:
     std::vector<Constraint*> constraints;
 
     bool wallExists;
+    SystemBuilder::AvailableSystems type;
 
     void addParticle(Particle* p);
     void addForce(Force* f);

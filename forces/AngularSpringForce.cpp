@@ -34,24 +34,14 @@ void AngularSpringForce::apply() {
     if (cosAngle > 1.0) cosAngle = 1.0;
     if (cosAngle < -1.0) cosAngle = -1.0;
     double angle = acos(cosAngle);
-    Vec3f ld = particles[0]->velocity - particles[1]->velocity;
-
-    //Vector perpendicular to plane of the two vectors
-    Vec3f crossVec = cross(l1, l2);
-    crossVec /= norm(crossVec);
-    //Vectors perpendicular to the two vectors in the plane
-    Vec3f l1perp = cross(crossVec, l1);
-    l1perp /= norm(l1perp);
-    Vec3f l2perp = cross(crossVec, l2);
-    l2perp /= norm(l2perp);
+    Vec3f l = particles[0]->position - particles[2]->position;
+    Vec3f ld = particles[0]->velocity - particles[2]->velocity;
 
     // Compute spring force
-    double result = ks * (angle - dist);
-    Vec3f l = particles[2]->position - particles[0]->position;
-    Vec3f i = particles[2]->velocity - particles[0]->velocity;
-    double damping = kd * (i * l) / norm(l);
-    particles[0]->force += (result + damping) * l1perp ;
-    particles[2]->force += (result + damping) * l2perp ;
+    Vec3f result = -(ks * ( norm(l) - sin(dist/2)*norm(l1) ) + kd * ((l * ld) / norm(l)) ) * (l / norm(l));
+
+    particles[0]->force += result;
+    particles[2]->force -= result;
 }
 
 void AngularSpringForce::draw() {

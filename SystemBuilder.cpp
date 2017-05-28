@@ -158,7 +158,7 @@ System* SystemBuilder::initHair() {
             sys->addForce(new AngularSpringForce(sys->particles[y],
                                                  sys->particles[y + 1],
                                                  sys->particles[y + 2],
-                                                 0.7f, 1.0f, dmp));
+                                                 1.5f, spr, dmp));
     }
 
 //    sys->addConstraint(new CircularWireConstraint(sys->particles[0],

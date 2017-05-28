@@ -9,7 +9,7 @@
 using namespace Eigen;
 
 void Euler::simulateStep(System* system, float h) {
-    TYPE type = SEMI;
+    TYPE type = IMPLICIT;
 
 
     if (type == IMPLICIT) {
@@ -59,10 +59,10 @@ void Euler::implicit(System *sys, float h) {
     // Fill mass matrix
     MatrixXf M = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
 
-    for (int i = 0; i < sys->particles.size(); i+=3) {
-        M(i,i) = sys->particles[i]->mass;
-        M(i+1,i+1) = sys->particles[i]->mass;
-        M(i+2,i+2) = sys->particles[i]->mass;
+    for (int i = 0; i < sys->particles.size() * 3; i+=3) {
+        M(i + 0, i + 0) = sys->particles[i/3]->mass;
+        M(i + 1, i + 1) = sys->particles[i/3]->mass;
+        M(i + 2, i + 2) = sys->particles[i/3]->mass;
     }
 
     std::map<int, std::map<int, float>> indexMap;
@@ -97,19 +97,18 @@ void Euler::implicit(System *sys, float h) {
     }
 
     // Get fold and vold
-    VectorXf fold = sys->derivEval();
-//    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
+    VectorXf der = sys->derivEval();
+    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
     VectorXf vold = VectorXf::Zero(sys->getDim()/2);
     for (int i = 0; i < sys->particles.size(); i++) {
         Particle* p = sys->particles[i];
-//        fold[i * 3 + 0] = p->force[0];
-//        fold[i * 3 + 1] = p->force[1];
-//        fold[i * 3 + 2] = p->force[2];
-        vold[i * 3 + 0] = p->velocity[0];
-        vold[i * 3 + 1] = p->velocity[1];
-        vold[i * 3 + 2] = p->velocity[2];
+        vold[i * 3 + 0] = der[i * 6 + 0];//p->velocity[0];
+        vold[i * 3 + 1] = der[i * 6 + 1];//p->velocity[1];
+        vold[i * 3 + 2] = der[i * 6 + 2];//p->velocity[2];
+        fold[i * 3 + 0] = der[i * 6 + 3];
+        fold[i * 3 + 1] = der[i * 6 + 4];
+        fold[i * 3 + 2] = der[i * 6 + 5];
     }
-
 
     // Compute A
     MatrixXf A = M - h * h * jx; //- h * jv;
@@ -119,6 +118,8 @@ void Euler::implicit(System *sys, float h) {
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(A);
     VectorXf dy = cg.solve(b);
+    std::cout << "#iterations:     " << cg.iterations() << std::endl;
+    std::cout << "estimated error: " << cg.error()      << std::endl;
 
     // Set new state
     VectorXf newState(sys->getDim());
@@ -131,7 +132,6 @@ void Euler::implicit(System *sys, float h) {
         newState[si + 3] = dy[i + 0];                           // Set new velocity
         newState[si + 4] = dy[i + 1];
         newState[si + 5] = dy[i + 2];
-//        printf("%f %f %f\n", dy[i+0], dy[i+1], dy[i+2]);
     }
 
     sys->setState(newState);

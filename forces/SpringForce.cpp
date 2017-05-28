@@ -55,13 +55,11 @@ map<int, map<int, float>>  SpringForce::jx() {
     float xijn = xij.norm();
 
     MatrixXf force = ks * I - ks * dist / xijn * I - ks * dist / (xijn * xijn * xijn) * xij * xij.transpose();
+
     for (int i = 0; i < force.rows(); i++) {
         for (int j = 0; j < force.cols(); j++) {
-            printf("%f ", force(i,j));
             values[particles[0]->index * 3 + i][particles[1]->index * 3 + j] = force(i,j);
         }
-        printf("\n");
     }
-    printf("\n");
     return values;
 }

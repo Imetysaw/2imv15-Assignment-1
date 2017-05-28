@@ -14,7 +14,7 @@
 #include <GLUT/glut.h>
 #endif
 
-System::System(Solver *solver) : solver(solver), time(0.0f) {}
+System::System(Solver *solver) : solver(solver), time(0.0f), wallExists(false) {}
 
 /**
  * Adds a given particle to the system
@@ -162,55 +162,55 @@ VectorXf System::computeDerivative() {
 
 void System::drawParticles(bool drawUtil) {
     // 10 x 26
-    glEnable(GL_LIGHTING);
-    glBegin(GL_TRIANGLES);
-    int dx = 4, dy = 4;
-    glColor3f(0.4f, 0.7f, 0.5f);
-    for (int zx = 0; zx < dx - 1; zx++){
-        for (int y = 0; y < dy - 1; y++) {
-            int x = zx + y * dx;
-            Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
-            Vec3f d2 = particles[x]->position - particles[x + dx]->position;
-
-            Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
-            //draw front
-            glNormal3f(n[0], n[1], n[2]);
-            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
-            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
-                       particles[x + dx + 1]->position[2]);
-            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
-            //draw back
-            glNormal3f(-n[0], -n[1], -n[2]);
-            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
-            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
-            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
-                       particles[x + dx + 1]->position[2]);
-
-
-            d1 = particles[x]->position - particles[x + 1]->position;
-            d2 = particles[x]->position - particles[x + dx + 1]->position;
-
-            n = - (cross(d1, d2) / norm(cross(d1, d2)));
-            //draw front
-            glNormal3f(n[0], n[1], n[2]);
-            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
-            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
-            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
-                       particles[x + dx + 1]->position[2]);
-            //draw back
-            glNormal3f(-n[0], -n[1], -n[2]);
-            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
-            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
-                       particles[x + dx + 1]->position[2]);
-            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
-        }
-    }
-    glEnd();
-    glDisable(GL_LIGHTING);
+//    glEnable(GL_LIGHTING);
+//    glBegin(GL_TRIANGLES);
+//    int dx = 4, dy = 4;
+//    glColor3f(0.4f, 0.7f, 0.5f);
+//    for (int zx = 0; zx < dx - 1; zx++){
+//        for (int y = 0; y < dy - 1; y++) {
+//            int x = zx + y * dx;
+//            Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
+//            Vec3f d2 = particles[x]->position - particles[x + dx]->position;
+//
+//            Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
+//            //draw front
+//            glNormal3f(n[0], n[1], n[2]);
+//            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+//            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+//                       particles[x + dx + 1]->position[2]);
+//            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
+//            //draw back
+//            glNormal3f(-n[0], -n[1], -n[2]);
+//            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+//            glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1], particles[x + dx]->position[2]);
+//            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+//                       particles[x + dx + 1]->position[2]);
+//
+//
+//            d1 = particles[x]->position - particles[x + 1]->position;
+//            d2 = particles[x]->position - particles[x + dx + 1]->position;
+//
+//            n = - (cross(d1, d2) / norm(cross(d1, d2)));
+//            //draw front
+//            glNormal3f(n[0], n[1], n[2]);
+//            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+//            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
+//            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+//                       particles[x + dx + 1]->position[2]);
+//            //draw back
+//            glNormal3f(-n[0], -n[1], -n[2]);
+//            glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+//            glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
+//                       particles[x + dx + 1]->position[2]);
+//            glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
+//        }
+//    }
+//    glEnd();
+//    glDisable(GL_LIGHTING);
 
     if(wallExists) {
-        glColor3f(1.f, 1.f, 1.f);
-        glBegin(GL_LINES);
+        glColor3f(.5f, .5f, .5f);
+        glBegin(GL_QUADS);
         int numZ = 10;
         int numY = 10;
         for (int i = 0; i < numZ + 1; i++) {

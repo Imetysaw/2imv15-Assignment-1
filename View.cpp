@@ -36,7 +36,8 @@ void keypressCallback(unsigned char k, int x, int y) {
 }
 
 View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), frameNumber(0), dt(dt), N(N) {
+        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawOthers(true),
+          frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
     glutInitWindowPosition ( 0, 0 );
@@ -103,6 +104,9 @@ void View::onKeyPress ( unsigned char key, int x, int y )
         case 'p':
             drawUtil = !drawUtil;
             break;
+        case 'o':
+            drawOthers = !drawOthers;
+            break;
         case ',':
             rotate = 1;
             break;
@@ -137,7 +141,6 @@ void View::onMouseEvent( int button, int state, int x, int y )
     if(mouse_down[button]) mouse_release[button] = state == GLUT_UP;
     if(mouse_down[button]) mouse_shiftclick[button] = glutGetModifiers()==GLUT_ACTIVE_SHIFT;
     mouse_down[button] = state == GLUT_DOWN;
-    printf("x: %d, y: %d, width: %d \n", x, y, width);
 
     //Reset force on mouse up
     if(state == GLUT_UP){
@@ -158,7 +161,6 @@ void View::onMouseEvent( int button, int state, int x, int y )
             gluProject(position[0], position[1], position[2], modelMatrix, projectionMatrix, viewMatrix,
                        &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
             double distance = abs(x - screenCoordinates[0]) + abs(y - (height - screenCoordinates[1]));
-//            printf("%f\n",screenCoordinates[2]);
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestParticle = sys->particles[i];
@@ -229,9 +231,7 @@ void View::onDisplay()
     preDisplay3D ();
 
     if (sys != NULL)
-        sys->draw(drawUtil);
-
-//    preDisplay2D();
+        sys->draw(drawUtil, drawOthers);
 
     postDisplay ();
 }
@@ -249,17 +249,6 @@ void View::preDisplay3D()
     if (rotate != 0) {
         camAngle += rotate * 0.5f;
     }
-}
-
-void View::preDisplay2D()
-{
-    //Set ortho view
-//    glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
-//    glLoadIdentity(); // Clear the matrix
-//    glOrtho(-9.0, 9.0, -9.0, 9.0, 0.0, 30.0); // Setup an Ortho view
-//    glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
-//    glLoadIdentity(); // Clear the model matrix
-
 }
 
 void View::postDisplay()

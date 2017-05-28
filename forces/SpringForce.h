@@ -12,7 +12,7 @@ public:
     void draw() override;
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
-    MatrixXf jx() override;
+    map<int, map<int, float>>  jx() override;
 private:
     float const dist;     // rest length
     float const ks, kd; // spring strength constants

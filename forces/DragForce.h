@@ -16,7 +16,7 @@ public:
     void apply() override;
     void draw() override;
 
-    MatrixXf jx() override;
+    map<int, map<int, float>>  jx() override;
 private:
     float amount;
 };

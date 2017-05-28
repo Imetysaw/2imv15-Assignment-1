@@ -9,8 +9,10 @@
 #include <vector>
 
 #include <Eigen/Dense>
+#include <map>
 
 using namespace Eigen;
+using namespace std;
 
 class Force {
 protected:
@@ -22,7 +24,7 @@ public:
     virtual void apply() = 0;
     virtual void draw() = 0;
 
-    virtual MatrixXf jx() = 0;
+    virtual map<int, map<int, float>> jx() = 0;
     void setActive(bool state);
     void toggle();
 

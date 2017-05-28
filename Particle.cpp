@@ -22,11 +22,11 @@ void Particle::reset()
 }
 void Particle::draw(bool drawUtil)
 {
-	const float h = 2.f;
+	const float h = 1.f;
 	glColor3f(1.f, 1.f, 1.f);
     glPointSize(h);
 	glBegin(GL_POINTS);
-    glVertex3f(position[0], position[1], position[2]);
+        glVertex3f(position[0], position[1], position[2]);
 	glEnd();
 
     if (drawUtil) {

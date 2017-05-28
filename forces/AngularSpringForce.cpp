@@ -47,7 +47,7 @@ void AngularSpringForce::apply() {
 void AngularSpringForce::draw() {
 }
 
-MatrixXf AngularSpringForce::jx() {
-    MatrixXf jx = MatrixXf::Zero(particles.size(), particles.size());
-    return Eigen::MatrixXf();
+map<int, map<int, float>> AngularSpringForce::jx() {
+    map<int, map<int, float>> values = map<int, map<int, float>>();
+    return values;
 }

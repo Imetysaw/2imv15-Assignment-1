@@ -28,6 +28,7 @@ void DirectionalForce::draw()
 
 }
 
-MatrixXf DirectionalForce::jx() {
-    return MatrixXf::Zero(particles.size(), particles.size());
+map<int, map<int, float>> DirectionalForce::jx() {
+    map<int, map<int, float>> values = map<int, map<int, float>>();
+    return values;
 }

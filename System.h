@@ -53,7 +53,7 @@ public:
     void step(float dt);
     void free();
     void reset();
-    void draw(bool drawUtil = false);
+    void draw(bool drawUtil, bool drawOthers);
 };
 
 

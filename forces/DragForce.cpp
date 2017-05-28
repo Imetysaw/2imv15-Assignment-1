@@ -28,6 +28,7 @@ void DragForce::draw()
 
 }
 
-MatrixXf DragForce::jx() {
-    return Eigen::MatrixXf();
+map<int, map<int, float>>  DragForce::jx() {
+    map<int, map<int, float>> values = map<int, map<int, float>>();
+    return values;
 }

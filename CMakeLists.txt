@@ -41,8 +41,6 @@ set(SOURCE_FILES
         constraints/CircularWireConstraint.h
         imageio.cpp
         imageio.h
-        linearSolver.cpp
-        linearSolver.h
         Particle.cpp
         Particle.h
         ParticleToy.cpp

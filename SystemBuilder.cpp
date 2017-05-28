@@ -63,7 +63,7 @@ System* SystemBuilder::initBasic()
 System* SystemBuilder::initCloth() {
     System* sys = new System(new Euler());
 
-    const int xSize = 10, ySize = 26;
+    const int xSize = 4, ySize = 4;
     const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
     int pindex = 0;
     // Initialize particles
@@ -115,12 +115,12 @@ System* SystemBuilder::initCloth() {
         }
     }
 
-//    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
-//                                                  sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
-//                                                  0.05f, {0}));
     float r = 0.05f;
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], //ySize/2 * xSize],
-                                                  sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
+                                                  sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
+                                                  r));
+    sys->addConstraint(new CircularWireConstraint(sys->particles[ySize/2 * xSize],
+                                                  sys->particles[ySize/2 * xSize]->startPos + Vec3f(-r, 0.f, 0.f),
                                                   r));
     sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
                                                   sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),

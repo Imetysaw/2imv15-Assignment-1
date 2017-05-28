@@ -31,7 +31,7 @@ private:
     int initialMx, initialMy;
     int width, height;
     bool dumpFrames;
-    bool drawUtil;
+    bool drawUtil, drawOthers;
     bool isSimulating;
     int rotate = 0;
     int N;

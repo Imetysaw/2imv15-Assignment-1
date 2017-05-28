@@ -3,6 +3,7 @@
 #include "../Particle.h"
 #include "Force.h"
 #include "SpringForce.h"
+#include <map>
 
 class AngularSpringForce : public Force {
 
@@ -13,7 +14,7 @@ public:
     void draw() override;
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
-    MatrixXf jx() override;
+    map<int, map<int, float>> jx() override;
 
 private:
     float const dist;     // rest length

@@ -45,7 +45,23 @@ void SpringForce::draw()
     glEnd();
 }
 
-MatrixXf SpringForce::jx() {
-    MatrixXf jx = MatrixXf::Zero(particles.size(), particles.size());
-    return jx;
+map<int, map<int, float>>  SpringForce::jx() {
+    map<int, map<int, float>> values = map<int, map<int, float>>();
+    MatrixXf I = MatrixXf::Identity(3, 3);
+
+    Vec3f dxij = particles[0]->position - particles[1]->position;
+
+    Vector3f xij = Vector3f(dxij[0], dxij[1], dxij[2]);
+    float xijn = xij.norm();
+
+    MatrixXf force = ks * I - ks * dist / xijn * I - ks * dist / (xijn * xijn * xijn) * xij * xij.transpose();
+    for (int i = 0; i < force.rows(); i++) {
+        for (int j = 0; j < force.cols(); j++) {
+            printf("%f ", force(i,j));
+            values[particles[0]->index * 3 + i][particles[1]->index * 3 + j] = force(i,j);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    return values;
 }

@@ -59,27 +59,55 @@ void Euler::implicit(System *sys, float h) {
     // Fill mass matrix
     MatrixXf M = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
 
-    for (int i = 0; i < sys->particles.size(); i++) {
+    for (int i = 0; i < sys->particles.size(); i+=3) {
         M(i,i) = sys->particles[i]->mass;
+        M(i+1,i+1) = sys->particles[i]->mass;
+        M(i+2,i+2) = sys->particles[i]->mass;
     }
 
-    // Compute Jx
-    MatrixXf jx = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
+    std::map<int, std::map<int, float>> indexMap;
+
+    // Initialize empty map to compute jx
+    map<int, map<int, float>> jxm = map<int, map<int, float>>();
+
     for (Force* f : sys->forces) {
-        jx += f->jx();
+        // Compute map for every force and update jxm appropriately
+        map<int, map<int, float>> jx = f->jx();
+        for (auto const &i1 : jx) {
+            for (auto const &i2 : i1.second) {
+                if (jxm.count(i1.first) && jxm[i1.first].count(i2.first)) {
+                    // i1 and i2 exist
+                    // Hence, we update the already existing value
+                    jxm[i1.first][i2.first] += i2.second;
+                } else {
+                    // No value yet exists, since i1 or i2 does not exist
+                    // Hence we set a new value
+                    jxm[i1.first][i2.first] = i2.second;
+                }
+            }
+        }
+    }
+
+    // Fill jx matrix based on the map jxm
+    MatrixXf jx(sys->getDim()/2, sys->getDim()/2);
+    for (int i = 0; i < sys->getDim()/2; i++) {
+        for (int j = 0; j < sys->getDim()/2; j++) {
+            jx(i, j) = jxm[i][j];
+        }
     }
 
     // Get fold and vold
-    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
+    VectorXf fold = sys->derivEval();
+//    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
     VectorXf vold = VectorXf::Zero(sys->getDim()/2);
-    for (int i = 0; i < sys->particles.size() * 3; i+= 3) {
+    for (int i = 0; i < sys->particles.size(); i++) {
         Particle* p = sys->particles[i];
-        fold[i + 0] = p->force[i + 0];
-        fold[i + 1] = p->force[i + 1];
-        fold[i + 2] = p->force[i + 2];
-        vold[i + 0] = p->velocity[i + 0];
-        vold[i + 1] = p->velocity[i + 1];
-        vold[i + 2] = p->velocity[i + 2];
+//        fold[i * 3 + 0] = p->force[0];
+//        fold[i * 3 + 1] = p->force[1];
+//        fold[i * 3 + 2] = p->force[2];
+        vold[i * 3 + 0] = p->velocity[0];
+        vold[i * 3 + 1] = p->velocity[1];
+        vold[i * 3 + 2] = p->velocity[2];
     }
 
 
@@ -93,17 +121,18 @@ void Euler::implicit(System *sys, float h) {
     VectorXf dy = cg.solve(b);
 
     // Set new state
-    VectorXf newState = VectorXf(sys->getDim());
+    VectorXf newState(sys->getDim());
+
     for (int i = 0; i < dy.size(); i+=3) {
-        newState[i + 0] = oldState[i + 0] + dy[3] * h;
-        newState[i + 1] = oldState[i + 1] + dy[4] * h;
-        newState[i + 2] = oldState[i + 2] + dy[5] * h;
-        newState[i + 3] = dy[3];
-        newState[i + 4] = dy[4];
-        newState[i + 5] = dy[5];
+        int si = i * 2; // State index
+        newState[si + 0] = oldState[si + 0] + dy[i + 0] * h;    // Update position based on velocity * timestep
+        newState[si + 1] = oldState[si + 1] + dy[i + 1] * h;
+        newState[si + 2] = oldState[si + 2] + dy[i + 2] * h;
+        newState[si + 3] = dy[i + 0];                           // Set new velocity
+        newState[si + 4] = dy[i + 1];
+        newState[si + 5] = dy[i + 2];
+//        printf("%f %f %f\n", dy[i+0], dy[i+1], dy[i+2]);
     }
-    if(sys->wallExists) {
-        newState = sys->checkWallCollision(oldState, newState);
-    }
+
     sys->setState(newState);
 }

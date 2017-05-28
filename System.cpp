@@ -162,7 +162,6 @@ VectorXf System::computeDerivative() {
 
 void System::drawParticles(bool drawUtil) {
     // 10 x 26
-    Vec3f lx = Vec3f(-.5f, .5f, 0);
     glEnable(GL_LIGHTING);
     glBegin(GL_TRIANGLES);
     int dx = 4, dy = 4;
@@ -205,10 +204,10 @@ void System::drawParticles(bool drawUtil) {
                        particles[x + dx + 1]->position[2]);
             glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
         }
-        }
-        glEnd();
-        glDisable(GL_LIGHTING);
     }
+    glEnd();
+    glDisable(GL_LIGHTING);
+
     if(wallExists) {
         glColor3f(1.f, 1.f, 1.f);
         glBegin(GL_LINES);

@@ -50,7 +50,8 @@ void AngularSpringForce::apply() {
     Vec3f l = particles[2]->position - particles[0]->position;
     Vec3f i = particles[2]->velocity - particles[0]->velocity;
     double damping = kd * (i * l) / norm(l);
-    particles[1]->force += (result + damping) * (l1perp + l2perp);
+    particles[0]->force += (result + damping) * l1perp ;
+    particles[2]->force += (result + damping) * l2perp ;
 }
 
 void AngularSpringForce::draw() {

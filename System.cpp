@@ -7,19 +7,20 @@
 #include "solvers/ConstraintSolver.h"
 
 #if defined(_WIN32) || defined(WIN32)
+
 #include <GL/glut.h>
+
 #else
 #include <GLUT/glut.h>
 #endif
 
-System::System(Solver* solver) : solver(solver), time(0.0f) {}
+System::System(Solver *solver) : solver(solver), time(0.0f) {}
 
 /**
  * Adds a given particle to the system
  * @param p The particle to add
  */
-void System::addParticle(Particle* p)
-{
+void System::addParticle(Particle *p) {
     particles.push_back(p);
 }
 
@@ -27,8 +28,7 @@ void System::addParticle(Particle* p)
  * Adds a force to use in the system when advancing a time step
  * @param f The new force to use in the system
  */
-void System::addForce(Force* f)
-{
+void System::addForce(Force *f) {
     forces.push_back(f);
 }
 
@@ -36,16 +36,14 @@ void System::addForce(Force* f)
  * Adds a constraint to use in the system when advancing a time step
  * @param c The new constraint to use in the system
  */
-void System::addConstraint(Constraint* c)
-{
+void System::addConstraint(Constraint *c) {
     constraints.push_back(c);
 }
 
 /**
  * Frees all system data
  */
-void System::free()
-{
+void System::free() {
     particles.clear();
     forces.clear();
 }
@@ -53,9 +51,8 @@ void System::free()
 /**
  * Resets all the system to it's initial state
  */
-void System::reset()
-{
-    for (Particle * p : particles) {
+void System::reset() {
+    for (Particle *p : particles) {
         p->reset();
     }
 }
@@ -75,8 +72,7 @@ void System::draw(bool drawUtil) {
  * Runs the active solver on the system to progress it's state by dt time
  * @param dt the amount of time to advance the system
  */
-void System::step(float dt)
-{
+void System::step(float dt) {
     solver->simulateStep(this, dt);
 }
 
@@ -89,12 +85,11 @@ unsigned long System::getDim() {
  * Constructs a state given the current system
  * @return A copy of the current state of the system
  */
-VectorXf System::getState()
-{
+VectorXf System::getState() {
     VectorXf r(this->getDim());
 
     for (int i = 0; i < this->particles.size(); i++) {
-        Particle* p = particles[i];
+        Particle *p = particles[i];
         r[i * 6 + 0] = p->position[0];
         r[i * 6 + 1] = p->position[1];
         r[i * 6 + 2] = p->position[2];
@@ -125,9 +120,8 @@ void System::setState(VectorXf src) {
     this->setState(src, this->getTime());
 }
 
-void System::setState(VectorXf src, float t)
-{
-    for(int i=0; i < particles.size(); i++){
+void System::setState(VectorXf src, float t) {
+    for (int i = 0; i < particles.size(); i++) {
         particles[i]->position[0] = src[i * 6 + 0];
         particles[i]->position[1] = src[i * 6 + 1];
         particles[i]->position[2] = src[i * 6 + 2];
@@ -140,25 +134,22 @@ void System::setState(VectorXf src, float t)
 
 /// Private ///
 
-void System::computeForces()
-{
-    for (Force* f : forces) {
+void System::computeForces() {
+    for (Force *f : forces) {
         f->apply();
     }
 }
 
-void System::clearForces()
-{
-    for (Particle* p : particles) {
+void System::clearForces() {
+    for (Particle *p : particles) {
         p->force = Vec3f(0.0f, 0.0f, 0.0f);
     }
 }
 
-VectorXf System::computeDerivative()
-{
+VectorXf System::computeDerivative() {
     VectorXf dst(this->getDim());
-    for(int i=0; i < particles.size(); i++){
-        Particle* p = particles[i];
+    for (int i = 0; i < particles.size(); i++) {
+        Particle *p = particles[i];
         dst[i * 6 + 0] = p->velocity[0];        /* xdot = v */
         dst[i * 6 + 1] = p->velocity[1];
         dst[i * 6 + 2] = p->velocity[2];
@@ -169,14 +160,13 @@ VectorXf System::computeDerivative()
     return dst;
 }
 
-void System::drawParticles(bool drawUtil)
-{
+void System::drawParticles(bool drawUtil) {
     // 10 x 26
     Vec3f lx = Vec3f(-.5f, .5f, 0);
     glEnable(GL_LIGHTING);
     glBegin(GL_TRIANGLES);
     int dx = 10, dy = 26;
-    for (int zx = 0; zx < dx - 1; zx++){
+    for (int zx = 0; zx < dx - 1; zx++) {
         for (int y = 0; y < dy - 1; y++) {
             int x = zx + y * dx;
             Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
@@ -201,7 +191,7 @@ void System::drawParticles(bool drawUtil)
             d1 = particles[x]->position - particles[x + 1]->position;
             d2 = particles[x]->position - particles[x + dx + 1]->position;
 
-            n = - (cross(d1, d2) / norm(cross(d1, d2)));
+            n = -(cross(d1, d2) / norm(cross(d1, d2)));
             glColor3f(0.7f, 1.0f, 0.8f);
             //draw front
             glNormal3f(n[0], n[1], n[2]);
@@ -220,23 +210,50 @@ void System::drawParticles(bool drawUtil)
     glEnd();
     glDisable(GL_LIGHTING);
 
-    for(Particle* p : particles)
-    {
+    if(wallExists) {
+        glColor3f(1.f, 1.f, 1.f);
+        glBegin(GL_LINES);
+        int numZ = 10;
+        int numY = 10;
+        for (int i = 0; i < numZ + 1; i++) {
+            for (int j = 0; j < numY + 1; j++) {
+                glVertex3f(-0.55f, -5.f, -3.f);
+                glVertex3f(-0.55f, -5.f + 7.f * j / numY, -3.f);
+                glVertex3f(-0.55f, -5.f, -3.f);
+                glVertex3f(-0.55f, -5.f, 7.f * i / numZ - 3.f);
+                glVertex3f(-0.55f, -5.f + 7.f * j / numY, -3.f);
+                glVertex3f(-0.55f, -5.f + 7.f * j / numY, 7.f * i / numZ - 3.f);
+                glVertex3f(-0.55f, -5.f, 7.f * i / numZ - 3.f);
+                glVertex3f(-0.55f, -5.f + 7.f * j / numY, 7.f * i / numZ - 3.f);
+            }
+        }
+        glEnd();
+    }
+    for (Particle *p : particles) {
         p->draw(drawUtil);
     }
 }
 
-void System::drawForces()
-{
-    for(Force* f : forces)
-    {
+void System::drawForces() {
+    for (Force *f : forces) {
         f->draw();
     }
 }
 
-void System::drawConstraints()
-{
-    for (Constraint* c : constraints) {
+void System::drawConstraints() {
+    for (Constraint *c : constraints) {
         c->draw();
     }
+}
+
+VectorXf System::checkWallCollision(VectorXf oldState, VectorXf newState) {
+    //collision from side
+    for (int i = 0; i < particles.size(); i++) {
+        if (newState[i * 6] < -0.55f) {
+            newState[i * 6] = -0.55f;
+        }
+    }
+
+
+    return newState;
 }

@@ -32,9 +32,12 @@ public:
     std::vector<Force*> forces;
     std::vector<Constraint*> constraints;
 
+    bool wallExists;
+
     void addParticle(Particle* p);
     void addForce(Force* f);
     void addConstraint(Constraint* c);
+    VectorXf checkWallCollision(VectorXf oldState, VectorXf newState);
 
     // ODE interface
     VectorXf derivEval();

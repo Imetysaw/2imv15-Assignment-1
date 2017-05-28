@@ -24,5 +24,8 @@ void Midpoint::simulateStep(System *system, float h) {
     // Update the state based on the computation from this midpoint
     VectorXf newState = oldState + h * deriv;
 
+    if(system->wallExists) {
+        newState = system->checkWallCollision(oldState, newState);
+    }
     system->setState(newState, system->getTime() + h);
 }

@@ -88,6 +88,10 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->free ();
             exit ( 0 );
             break;
+        case 'w':
+        case 'W':
+            sys->wallExists = !sys->wallExists;
+            break;
         case '=':
             dt += 0.01f;
             printf("Increase dt: %f\n", dt);

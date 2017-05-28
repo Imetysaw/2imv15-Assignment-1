@@ -47,7 +47,10 @@ void AngularSpringForce::apply() {
 
     // Compute spring force
     double result = ks * (angle - dist);
-    particles[1]->force += result * (l1perp+l2perp);
+    Vec3f l = particles[2]->position - particles[0]->position;
+    Vec3f i = particles[2]->velocity - particles[0]->velocity;
+    double damping = kd * (i * l) / norm(l);
+    particles[1]->force += (result + damping) * (l1perp + l2perp);
 }
 
 void AngularSpringForce::draw() {

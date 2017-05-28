@@ -37,8 +37,16 @@ void Euler::simulateStep(System* system, float h) {
             }
 
             // Set the new state, using semi implicit computation
+
+            //check collisions
+            if(system->wallExists) {
+                semiImpl = system->checkWallCollision(oldState, semiImpl);
+            }
             system->setState(semiImpl, system->getTime() + h);
         } else {
+            if(system->wallExists) {
+                newState = system->checkWallCollision(oldState, newState);
+            }
             system->setState(newState, system->getTime() + h);
         }
     }
@@ -93,6 +101,9 @@ void Euler::implicit(System *sys, float h) {
         newState[i + 3] = dy[3];
         newState[i + 4] = dy[4];
         newState[i + 5] = dy[5];
+    }
+    if(sys->wallExists) {
+        newState = sys->checkWallCollision(oldState, newState);
     }
     sys->setState(newState);
 }

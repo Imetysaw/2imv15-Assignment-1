@@ -38,7 +38,10 @@ void AngularSpringForce::apply() {
     Vec3f ld = particles[0]->velocity - particles[2]->velocity;
 
     // Compute spring force
-    Vec3f result = -(ks * ( norm(l) - sin(dist/2)*norm(l1) ) + kd * ((l * ld) / norm(l)) ) * (l / norm(l));
+    double b = norm(l1);
+    double c = norm(l2);
+    Vec3f result = -(ks * (norm(l) - sqrt(b * b + c * c - 2 * b * c * cos(dist))) + kd * ((l * ld) / norm(l))) *
+                   (l / norm(l));
 
     particles[0]->force += result;
     particles[2]->force -= result;
@@ -47,10 +50,10 @@ void AngularSpringForce::apply() {
 void AngularSpringForce::draw() {
     glBegin(GL_LINES);
     glColor3f(1.0f, 1.0f, 0.0f);
-        glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
-        glVertex3f(particles[1]->position[0], particles[1]->position[1], particles[1]->position[2]);
-        glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
-        glVertex3f(particles[2]->position[0], particles[2]->position[1], particles[2]->position[2]);
+    glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
+    glVertex3f(particles[1]->position[0], particles[1]->position[1], particles[1]->position[2]);
+    glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
+    glVertex3f(particles[2]->position[0], particles[2]->position[1], particles[2]->position[2]);
     glEnd();
 }
 

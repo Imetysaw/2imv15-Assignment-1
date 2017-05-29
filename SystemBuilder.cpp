@@ -34,7 +34,7 @@ System* SystemBuilder::get(AvailableSystems s) {
 
 System* SystemBuilder::initBasic()
 {
-    System* sys = new System(new Euler());
+    System* sys = new System(new Euler(Euler::SEMI));
 
     const float dist = 0.5f;
     const Vec3f center(0.0, 0.0, 0.0);
@@ -61,7 +61,7 @@ System* SystemBuilder::initBasic()
 }
 
 System* SystemBuilder::initCloth() {
-    System* sys = new System(new Euler());
+    System* sys = new System(new Euler(Euler::SEMI));
 
     const int xSize = 4, ySize = 4;
     const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
@@ -130,17 +130,17 @@ System* SystemBuilder::initCloth() {
 
 
 System* SystemBuilder::initHair() {
-    System* sys = new System(new RungeKutta());
+    System* sys = new System(new Euler(Euler::SEMI));
 
     const int ySize = 10;
     const float deltaY = 3.0f/ySize;
-    const int numHairs = 5;
+    const int numHairs = 8;
 
 
     for (int k = 0; k < numHairs; k++) {
         // Initialize particles
         for (int y = 0; y < ySize; y++) {
-            sys->addParticle(new Particle(Vec3f(-0.5f, 0.5f - y * deltaY, deltaY * y), 0.2f, k * ySize + y));
+            sys->addParticle(new Particle(Vec3f(-0.5f + 0.03f*k, 0.5f - y * deltaY, deltaY * y), 0.2f, k * ySize + y));
         }
 
         float spr = 120.0f;
@@ -157,12 +157,12 @@ System* SystemBuilder::initHair() {
             sys->addForce(new AngularSpringForce(sys->particles[k * ySize + y],
                                                  sys->particles[k * ySize + y + 1],
                                                  sys->particles[k * ySize + y + 2],
-                                                 1.5f, spr, dmp));
+                                                 2.5f, 20.f, dmp));
         }
 
         float r = 0.05f;
         sys->addConstraint(new CircularWireConstraint(sys->particles[k * ySize],
-                                                      sys->particles[0]->startPos + Vec3f(-r, 0.f, 0.f),
+                                                      sys->particles[k * ySize]->startPos + Vec3f(-r, 0.f, 0.f),
                                                       r));
     }
 

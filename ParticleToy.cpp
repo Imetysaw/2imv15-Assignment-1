@@ -43,7 +43,13 @@ int main ( int argc, char ** argv )
     printf ( "\t Toggle global directional force using the  '[' key\n" );
 	printf ( "\t Toggle the wall using the  'w' key\n" );
 	printf ( "\t Click on a particle and drag the mouse to apply force\n" );
-	printf ( "\t Use ',' '.' and '/' to rotate.\n" );
+	printf ( "\t Use ',' '.' and '/' to rotate\n" );
+	printf ( "\t Use '1' to '5' to change between solvers:\n" );
+	printf ( "\t 1: Explicit Euler\n" );
+	printf ( "\t 2: Semi explicit Euler\n" );
+	printf ( "\t 3: Implicit Euler\n" );
+	printf ( "\t 4: Midpoint\n" );
+	printf ( "\t 5: 4th order Runge-Kutta\n" );
 
 	View v(768, 512, dt, SystemBuilder::HAIR, N);
 

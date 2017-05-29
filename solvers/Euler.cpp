@@ -8,10 +8,9 @@
 
 using namespace Eigen;
 
-void Euler::simulateStep(System* system, float h) {
-    TYPE type = IMPLICIT;
+Euler::Euler(Euler::TYPE type) : type(type) {}
 
-
+void Euler::simulateStep(System *system, float h) {
     if (type == IMPLICIT) {
         implicit(system, h);
     } else {
@@ -39,12 +38,12 @@ void Euler::simulateStep(System* system, float h) {
             // Set the new state, using semi implicit computation
 
             //check collisions
-            if(system->wallExists) {
+            if (system->wallExists) {
                 semiImpl = system->checkWallCollision(oldState, semiImpl);
             }
             system->setState(semiImpl, system->getTime() + h);
         } else {
-            if(system->wallExists) {
+            if (system->wallExists) {
                 newState = system->checkWallCollision(oldState, newState);
             }
             system->setState(newState, system->getTime() + h);
@@ -57,12 +56,12 @@ void Euler::implicit(System *sys, float h) {
     VectorXf oldState = sys->getState();
 
     // Fill mass matrix
-    MatrixXf M = MatrixXf::Zero(sys->getDim()/2, sys->getDim()/2);
+    MatrixXf M = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
 
-    for (int i = 0; i < sys->particles.size() * 3; i+=3) {
-        M(i + 0, i + 0) = sys->particles[i/3]->mass;
-        M(i + 1, i + 1) = sys->particles[i/3]->mass;
-        M(i + 2, i + 2) = sys->particles[i/3]->mass;
+    for (int i = 0; i < sys->particles.size() * 3; i += 3) {
+        M(i + 0, i + 0) = sys->particles[i / 3]->mass;
+        M(i + 1, i + 1) = sys->particles[i / 3]->mass;
+        M(i + 2, i + 2) = sys->particles[i / 3]->mass;
     }
 
     std::map<int, std::map<int, float>> indexMap;
@@ -70,7 +69,7 @@ void Euler::implicit(System *sys, float h) {
     // Initialize empty map to compute jx
     map<int, map<int, float>> jxm = map<int, map<int, float>>();
 
-    for (Force* f : sys->forces) {
+    for (Force *f : sys->forces) {
         // Compute map for every force and update jxm appropriately
         map<int, map<int, float>> jx = f->jx();
         for (auto const &i1 : jx) {
@@ -89,19 +88,19 @@ void Euler::implicit(System *sys, float h) {
     }
 
     // Fill jx matrix based on the map jxm
-    MatrixXf jx(sys->getDim()/2, sys->getDim()/2);
-    for (int i = 0; i < sys->getDim()/2; i++) {
-        for (int j = 0; j < sys->getDim()/2; j++) {
+    MatrixXf jx(sys->getDim() / 2, sys->getDim() / 2);
+    for (int i = 0; i < sys->getDim() / 2; i++) {
+        for (int j = 0; j < sys->getDim() / 2; j++) {
             jx(i, j) = jxm[i][j];
         }
     }
 
     // Get fold and vold
     VectorXf der = sys->derivEval();
-    VectorXf fold = VectorXf::Zero(sys->getDim()/2);
-    VectorXf vold = VectorXf::Zero(sys->getDim()/2);
+    VectorXf fold = VectorXf::Zero(sys->getDim() / 2);
+    VectorXf vold = VectorXf::Zero(sys->getDim() / 2);
     for (int i = 0; i < sys->particles.size(); i++) {
-        Particle* p = sys->particles[i];
+        Particle *p = sys->particles[i];
         vold[i * 3 + 0] = der[i * 6 + 0];//p->velocity[0];
         vold[i * 3 + 1] = der[i * 6 + 1];//p->velocity[1];
         vold[i * 3 + 2] = der[i * 6 + 2];//p->velocity[2];
@@ -112,19 +111,19 @@ void Euler::implicit(System *sys, float h) {
 
     // Compute A
     MatrixXf A = M - h * h * jx; //- h * jv;
-    VectorXf b = h * ( fold + h * jx * vold );
+    VectorXf b = h * (fold + h * jx * vold);
 
     // Solve for dy
-    ConjugateGradient<MatrixXf, Lower|Upper> cg;
+    ConjugateGradient<MatrixXf, Lower | Upper> cg;
     cg.compute(A);
     VectorXf dy = cg.solve(b);
     std::cout << "#iterations:     " << cg.iterations() << std::endl;
-    std::cout << "estimated error: " << cg.error()      << std::endl;
+    std::cout << "estimated error: " << cg.error() << std::endl;
 
     // Set new state
     VectorXf newState(sys->getDim());
 
-    for (int i = 0; i < dy.size(); i+=3) {
+    for (int i = 0; i < dy.size(); i += 3) {
         int si = i * 2; // State index
         newState[si + 0] = oldState[si + 0] + dy[i + 0] * h;    // Update position based on velocity * timestep
         newState[si + 1] = oldState[si + 1] + dy[i + 1] * h;

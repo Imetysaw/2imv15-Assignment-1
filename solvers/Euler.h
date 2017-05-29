@@ -16,6 +16,10 @@ public:
         IMPLICIT,
         SEMI
     };
+    TYPE type;
+
+    Euler(TYPE type);
+
 private:
     void implicit(System* sys, float h);
 

@@ -24,7 +24,6 @@ private:
     void computeForces();
     void clearForces();
 
-    Solver* solver;
     float time;
 public:
     System(Solver* solver);
@@ -35,6 +34,7 @@ public:
 
     bool wallExists;
     SystemBuilder::AvailableSystems type;
+    Solver* solver;
 
     void addParticle(Particle* p);
     void addForce(Force* f);

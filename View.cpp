@@ -5,6 +5,9 @@
 #include "View.h"
 #include "imageio.h"
 #include "forces/DirectionalForce.h"
+#include "solvers/RungeKutta.h"
+#include "solvers/Euler.h"
+#include "solvers/Midpoint.h"
 
 #if defined(__CYGWIN__) || defined(WIN32)
 #include <GL/glut.h>
@@ -83,11 +86,30 @@ void View::onKeyPress ( unsigned char key, int x, int y )
         case 'D':
             dumpFrames = !dumpFrames;
             break;
-
         case 'q':
         case 'Q':
             sys->free ();
             exit ( 0 );
+            break;
+        case '1':
+            printf("Using Explicit Euler\n");
+            sys->solver = new Euler(Euler::EXPLICIT);
+            break;
+        case '2':
+            printf("Using Semi Explicit Euler\n");
+            sys->solver = new Euler(Euler::SEMI);
+            break;
+        case '3':
+            printf("Using Implicit Euler\n");
+            sys->solver = new Euler(Euler::IMPLICIT);
+            break;
+        case '4':
+            printf("Using Midpoint\n");
+            sys->solver = new Midpoint();
+            break;
+        case '5':
+            printf("Using 4th order Runge-Kutta\n");
+            sys->solver = new RungeKutta();
             break;
         case 'w':
         case 'W':

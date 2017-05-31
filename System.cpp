@@ -14,7 +14,7 @@
 #include <GLUT/glut.h>
 #endif
 
-System::System(Solver *solver) : solver(solver), time(0.0f), wallExists(false) {}
+System::System(Solver *solver) : solver(solver), time(0.0f), wallExists(false), dt(0.005) {}
 
 /**
  * Adds a given particle to the system
@@ -72,7 +72,24 @@ void System::draw(bool drawUtil, bool drawOthers) {
  * Runs the active solver on the system to progress it's state by dt time
  * @param dt the amount of time to advance the system
  */
-void System::step(float dt) {
+void System::step(bool adaptive) {
+    if (adaptive) {
+        VectorXf before = this->getState();
+        solver->simulateStep(this, dt);
+        VectorXf xa = this->getState();
+        this->setState(before);
+
+        solver->simulateStep(this, dt / 2);
+        solver->simulateStep(this, dt / 2);
+        VectorXf xb = this->getState();
+
+        float err = (xa - xb).norm();
+        if (err > 0)
+            dt *= pow(0.001f / err, .5f);
+
+        this->setState(before);
+    }
+
     solver->simulateStep(this, dt);
 }
 
@@ -161,10 +178,10 @@ VectorXf System::computeDerivative() {
 }
 
 void System::drawParticles(bool drawUtil) {
-    // 10 x 26
+    // 12 x 8
 //    glEnable(GL_LIGHTING);
 //    glBegin(GL_TRIANGLES);
-//    int dx = 4, dy = 4;
+//    int dx = 12, dy = 8;
 //    glColor3f(0.4f, 0.7f, 0.5f);
 //    for (int zx = 0; zx < dx - 1; zx++){
 //        for (int y = 0; y < dy - 1; y++) {

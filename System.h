@@ -33,6 +33,7 @@ public:
     std::vector<Constraint*> constraints;
 
     bool wallExists;
+    float dt;
     SystemBuilder::AvailableSystems type;
     Solver* solver;
 
@@ -50,7 +51,7 @@ public:
     void setState(VectorXf newState, float time);
     unsigned long getDim();
 
-    void step(float dt);
+    void step(bool adaptive);
     void free();
     void reset();
     void draw(bool drawUtil, bool drawOthers);

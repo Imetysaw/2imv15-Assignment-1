@@ -61,3 +61,7 @@ map<int, map<int, float>> AngularSpringForce::jx() {
     map<int, map<int, float>> values = map<int, map<int, float>>();
     return values;
 }
+
+MatrixXf AngularSpringForce::jv() {
+    return MatrixXf();
+}

@@ -39,7 +39,7 @@ void keypressCallback(unsigned char k, int x, int y) {
 }
 
 View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawOthers(true),
+        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawOthers(true), adaptive(false),
           frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
@@ -56,7 +56,7 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
     glEnable(GL_LIGHT0);
 
 
-    glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_GEQUAL);
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -116,12 +116,12 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->wallExists = !sys->wallExists;
             break;
         case '=':
-            dt += 0.01f;
-            printf("Increase dt: %f\n", dt);
+            sys->dt += 0.001f;
+            printf("Increase dt: %f\n", sys->dt);
             break;
         case '-':
-            dt -= 0.01f;
-            printf("Decrease dt: %f\n", dt);
+            sys->dt -= 0.001f;
+            printf("Decrease dt: %f\n", sys->dt);
             break;
         case 'p':
             drawUtil = !drawUtil;
@@ -137,6 +137,13 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             break;
         case '/':
             rotate = 0;
+            break;
+        case 'a':
+            adaptive = !adaptive;
+            if (adaptive)
+                printf("Adaptive on\n");
+            else
+                printf("Adaptive off\n");
             break;
         case '[':
             if(windForce) {
@@ -241,7 +248,7 @@ void View::onReshape(int width, int height )
 
 void View::onIdle()
 {
-    if ( isSimulating ) sys->step(dt);
+    if ( isSimulating ) sys->step(adaptive);
     else {getFromGUI();remapGUI();}
 
     glutSetWindow ( id );
@@ -277,14 +284,14 @@ void View::postDisplay()
 {
     // Write frames if necessary.
     if (dumpFrames) {
-        const int FRAME_INTERVAL = 4;
+        const int FRAME_INTERVAL = 40;
         if ((frameNumber % FRAME_INTERVAL) == 0) {
             const unsigned int w = glutGet(GLUT_WINDOW_WIDTH);
             const unsigned int h = glutGet(GLUT_WINDOW_HEIGHT);
             unsigned char * buffer = (unsigned char *) malloc(w * h * 4 * sizeof(unsigned char));
             if (!buffer)
                 exit(-1);
-            // glRasterPos2i(0, 0);
+            //glRasterPos2i(0, 0);
             glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             static char filename[80];
             sprintf(filename, "snapshots/img%.5i.png", frameNumber / FRAME_INTERVAL);

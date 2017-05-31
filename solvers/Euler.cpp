@@ -64,17 +64,20 @@ void Euler::implicit(System *sys, float h) {
         M(i + 2, i + 2) = sys->particles[i / 3]->mass;
     }
 
-    std::map<int, std::map<int, float>> indexMap;
+    // Fill jx and jy matrix based
+    MatrixXf jx(sys->getDim() / 2, sys->getDim() / 2);
+    MatrixXf jv(sys->getDim() / 2, sys->getDim() / 2);
 
     // Initialize empty map to compute jx
-    map<int, map<int, float>> jxm = map<int, map<int, float>>();
+    auto jxm = map<int, map<int, float>>();
 
     for (Force *f : sys->forces) {
         // Compute map for every force and update jxm appropriately
-        map<int, map<int, float>> jx = f->jx();
-        for (auto const &i1 : jx) {
+        auto fjx = f->jx();
+        for (auto const &i1 : fjx) {
             for (auto const &i2 : i1.second) {
                 if (jxm.count(i1.first) && jxm[i1.first].count(i2.first)) {
+                    // todo maybe check if we can remove this, it should never happen?
                     // i1 and i2 exist
                     // Hence, we update the already existing value
                     jxm[i1.first][i2.first] += i2.second;
@@ -85,52 +88,75 @@ void Euler::implicit(System *sys, float h) {
                 }
             }
         }
-    }
 
-    // Fill jx matrix based on the map jxm
-    MatrixXf jx(sys->getDim() / 2, sys->getDim() / 2);
-    for (int i = 0; i < sys->getDim() / 2; i++) {
-        for (int j = 0; j < sys->getDim() / 2; j++) {
-            jx(i, j) = jxm[i][j];
+
+        if (f->particles.size() == 2) {
+            MatrixXf fjv = f->jv();
+            jv.block(f->particles[0]->index * 3, f->particles[1]->index * 3, fjv.cols(), fjv.rows()) = fjv;
         }
     }
 
     // Get fold and vold
-    VectorXf der = sys->derivEval();
+    sys->derivEval();
     VectorXf fold = VectorXf::Zero(sys->getDim() / 2);
     VectorXf vold = VectorXf::Zero(sys->getDim() / 2);
     for (int i = 0; i < sys->particles.size(); i++) {
         Particle *p = sys->particles[i];
-        vold[i * 3 + 0] = der[i * 6 + 0];//p->velocity[0];
-        vold[i * 3 + 1] = der[i * 6 + 1];//p->velocity[1];
-        vold[i * 3 + 2] = der[i * 6 + 2];//p->velocity[2];
-        fold[i * 3 + 0] = der[i * 6 + 3];
-        fold[i * 3 + 1] = der[i * 6 + 4];
-        fold[i * 3 + 2] = der[i * 6 + 5];
+        vold[i * 3 + 0] = p->velocity[0];
+        vold[i * 3 + 1] = p->velocity[1];
+        vold[i * 3 + 2] = p->velocity[2];
+        fold[i * 3 + 0] = p->force[0];
+        fold[i * 3 + 1] = p->force[1];
+        fold[i * 3 + 2] = p->force[2];
     }
 
+    printf("Jv:\n");
+    for (int i = 0; i < jv.rows(); i++) {
+        for (int j = 0; j < jv.cols(); j++) {
+            printf("%f ", jv(i,j));
+        }
+        printf("\n");
+    }
+    printf("\n");
     // Compute A
-    MatrixXf A = M - h * h * jx; //- h * jv;
+    MatrixXf A = M - h * h * jx - h * jv;
     VectorXf b = h * (fold + h * jx * vold);
 
+//    printf("Jv:\n");
+//    for (int i = 0; i < jv.rows(); i++) {
+//        for (int j = 0; j < jv.cols(); j++) {
+//            printf("%f ", jv(i,j));
+//        }
+//        printf("\n");
+//    }
+//    printf("\n");
+    printf("A:\n");
+    for (int i = 0; i < A.rows(); i++) {
+        for (int j = 0; j < A.cols(); j++) {
+            printf("%f ", A(i,j));
+        }
+        printf("\n");
+    }
+    printf("\n");
+
     // Solve for dy
-    ConjugateGradient<MatrixXf, Lower | Upper> cg;
+    ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(A);
     VectorXf dy = cg.solve(b);
-    std::cout << "#iterations:     " << cg.iterations() << std::endl;
-    std::cout << "estimated error: " << cg.error() << std::endl;
+
+//    std::cout << "#iterations:     " << cg.iterations() << std::endl;
+//    std::cout << "estimated error: " << cg.error()      << std::endl;
 
     // Set new state
     VectorXf newState(sys->getDim());
-
     for (int i = 0; i < dy.size(); i += 3) {
         int si = i * 2; // State index
-        newState[si + 0] = oldState[si + 0] + dy[i + 0] * h;    // Update position based on velocity * timestep
-        newState[si + 1] = oldState[si + 1] + dy[i + 1] * h;
-        newState[si + 2] = oldState[si + 2] + dy[i + 2] * h;
-        newState[si + 3] = dy[i + 0];                           // Set new velocity
-        newState[si + 4] = dy[i + 1];
-        newState[si + 5] = dy[i + 2];
+        newState[si + 0] = oldState[si + 0] + (oldState[si + 3] + dy[i + 0]) * h;    // dX = (V0 + dV) * h
+        newState[si + 1] = oldState[si + 1] + (oldState[si + 4] + dy[i + 1]) * h;
+        newState[si + 2] = oldState[si + 2] + (oldState[si + 5] + dy[i + 2]) * h;
+        newState[si + 3] = oldState[si + 3] + dy[i + 0] * h;        // Update velocity
+        newState[si + 4] = oldState[si + 4] + dy[i + 1] * h;
+        newState[si + 5] = oldState[si + 5] + dy[i + 2] * h;
     }
 
     sys->setState(newState);

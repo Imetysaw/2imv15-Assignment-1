@@ -43,14 +43,14 @@ System* SystemBuilder::initBasic()
     sys->addParticle(new Particle(center + offset, 1.0f, 0));
     sys->addParticle(new Particle(center + offset * 2, 1.0f, 1));
     sys->addParticle(new Particle(center + offset * 3, 1.0f, 2));
-    sys->addParticle(new Particle(center + offset * 3, 1.0f, 3));
-    sys->addParticle(new Particle(center + offset * 4, 1.0f, 4));
-    sys->addParticle(new Particle(center + offset * 4, 1.0f, 5));
+//    sys->addParticle(new Particle(center + offset * 3, 1.0f, 3));
+//    sys->addParticle(new Particle(center + offset * 4, 1.0f, 4));
+//    sys->addParticle(new Particle(center + offset * 4, 1.0f, 5));
 
     sys->addForce(new DragForce(sys->particles, 0.5f));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
-    sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
-    sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 50.f, 1.5f));
+//    sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
+//    sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 50.f, 1.5f));
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
 
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
@@ -63,7 +63,7 @@ System* SystemBuilder::initBasic()
 System* SystemBuilder::initCloth() {
     System* sys = new System(new Euler(Euler::SEMI));
 
-    const int xSize = 4, ySize = 4;
+    const int xSize = 3, ySize = 3;
     const float deltaX = 2.0f/xSize, deltaY = 3.0f/ySize;
     int pindex = 0;
     // Initialize particles
@@ -76,10 +76,10 @@ System* SystemBuilder::initCloth() {
 
     // Add gravity and drag to all particles
     sys->addForce(new DirectionalForce(sys->particles, Vec3f(0, -9.81f, 0)));
-    sys->addForce(new DragForce(sys->particles, 0.5f));
+    sys->addForce(new DragForce(sys->particles, 0.3f));
 
-    float spr = 120.0f;
-    float dmp = 1.5f;
+    float spr = 150.0f;
+    float dmp = 4.5f;
 
     for (int y = 0; y < ySize; y++) {
         for (int x = 0; x < xSize - 1; x++) {
@@ -119,9 +119,9 @@ System* SystemBuilder::initCloth() {
     sys->addConstraint(new CircularWireConstraint(sys->particles[0],
                                                   sys->particles[0]->startPos + Vec3f(0.f, 0.05f, 0.f),
                                                   r));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[ySize/2 * xSize],
-                                                  sys->particles[ySize/2 * xSize]->startPos + Vec3f(-r, 0.f, 0.f),
-                                                  r));
+//    sys->addConstraint(new CircularWireConstraint(sys->particles[ySize/2 * xSize],
+//                                                  sys->particles[ySize/2 * xSize]->startPos + Vec3f(-r, 0.f, 0.f),
+//                                                  r));
     sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
                                                   sys->particles[xSize-1]->startPos + Vec3f(0.f, r, 0.f),
                                                   r));

@@ -30,5 +30,16 @@ void DragForce::draw()
 
 map<int, map<int, float>>  DragForce::jx() {
     map<int, map<int, float>> values = map<int, map<int, float>>();
+
+    for (Particle* p : particles) {
+        values[p->index + 0][p->index + 0]  = p->velocity[0] * -.5f;
+        values[p->index + 1][p->index + 1] = p->velocity[1] * -.5f;
+        values[p->index + 2][p->index + 2] = p->velocity[2] * -.5f;
+    }
+
     return values;
+}
+
+MatrixXf DragForce::jv() {
+    return MatrixXf();
 }

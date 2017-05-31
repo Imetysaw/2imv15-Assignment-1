@@ -32,7 +32,7 @@ private:
     int width, height;
     bool dumpFrames;
     bool drawUtil, drawOthers;
-    bool isSimulating;
+    bool isSimulating, adaptive;
     int rotate = 0;
     int N;
     int frameNumber;
@@ -52,7 +52,6 @@ private:
     void initialize(SystemBuilder::AvailableSystems type);
 
     // Display utility
-    void preDisplay2D();
     void preDisplay3D();
     void postDisplay();
 };

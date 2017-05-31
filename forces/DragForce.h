@@ -8,6 +8,8 @@
 
 #include "Force.h"
 
+using namespace Eigen;
+
 class DragForce : public Force {
 public:
     DragForce(std::vector<Particle*> particles, float amount);
@@ -17,6 +19,7 @@ public:
     void draw() override;
 
     map<int, map<int, float>>  jx() override;
+    MatrixXf jv() override;
 private:
     float amount;
 };

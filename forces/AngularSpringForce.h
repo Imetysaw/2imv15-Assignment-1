@@ -15,6 +15,7 @@ public:
     void setTarget(std::vector<Particle*> particles) override;
     void apply() override;
     map<int, map<int, float>> jx() override;
+    MatrixXf jv() override;
 
 private:
     float const dist;     // rest length

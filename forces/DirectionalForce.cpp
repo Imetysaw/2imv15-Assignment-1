@@ -4,6 +4,8 @@
 
 #include "DirectionalForce.h"
 
+using namespace Eigen;
+
 DirectionalForce::DirectionalForce(std::vector<Particle*> particles, Vec3f direction) : direction(direction)
 {
     this->setTarget(particles);
@@ -31,4 +33,8 @@ void DirectionalForce::draw()
 map<int, map<int, float>> DirectionalForce::jx() {
     map<int, map<int, float>> values = map<int, map<int, float>>();
     return values;
+}
+
+MatrixXf DirectionalForce::jv() {
+    return MatrixXf();
 }

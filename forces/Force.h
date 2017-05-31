@@ -16,15 +16,16 @@ using namespace std;
 
 class Force {
 protected:
-    std::vector<Particle*> particles;
     bool active = true;
 
 public:
+    std::vector<Particle*> particles;
     virtual void setTarget(std::vector<Particle*> particles) = 0;
     virtual void apply() = 0;
     virtual void draw() = 0;
 
     virtual map<int, map<int, float>> jx() = 0;
+    virtual MatrixXf jv() = 0;
     void setActive(bool state);
     void toggle();
 

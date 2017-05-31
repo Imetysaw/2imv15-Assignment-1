@@ -65,8 +65,8 @@ void Euler::implicit(System *sys, float h) {
     }
 
     // Fill jx and jy matrix based
-    MatrixXf jx(sys->getDim() / 2, sys->getDim() / 2);
-    MatrixXf jv(sys->getDim() / 2, sys->getDim() / 2);
+    MatrixXf jx = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
+    MatrixXf jv = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
 
     // Initialize empty map to compute jx
     auto jxm = map<int, map<int, float>>();
@@ -93,6 +93,7 @@ void Euler::implicit(System *sys, float h) {
         if (f->particles.size() == 2) {
             MatrixXf fjv = f->jv();
             jv.block(f->particles[0]->index * 3, f->particles[1]->index * 3, fjv.cols(), fjv.rows()) = fjv;
+            jv.block(f->particles[1]->index * 3, f->particles[0]->index * 3, fjv.cols(), fjv.rows()) = fjv;
         }
     }
 
@@ -110,34 +111,9 @@ void Euler::implicit(System *sys, float h) {
         fold[i * 3 + 2] = p->force[2];
     }
 
-    printf("Jv:\n");
-    for (int i = 0; i < jv.rows(); i++) {
-        for (int j = 0; j < jv.cols(); j++) {
-            printf("%f ", jv(i,j));
-        }
-        printf("\n");
-    }
-    printf("\n");
     // Compute A
-    MatrixXf A = M - h * h * jx - h * jv;
+    MatrixXf A = M - h * h * jx;// - h * jv;
     VectorXf b = h * (fold + h * jx * vold);
-
-//    printf("Jv:\n");
-//    for (int i = 0; i < jv.rows(); i++) {
-//        for (int j = 0; j < jv.cols(); j++) {
-//            printf("%f ", jv(i,j));
-//        }
-//        printf("\n");
-//    }
-//    printf("\n");
-    printf("A:\n");
-    for (int i = 0; i < A.rows(); i++) {
-        for (int j = 0; j < A.cols(); j++) {
-            printf("%f ", A(i,j));
-        }
-        printf("\n");
-    }
-    printf("\n");
 
     // Solve for dy
     ConjugateGradient<MatrixXf, Lower|Upper> cg;

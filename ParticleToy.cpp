@@ -44,7 +44,8 @@ int main ( int argc, char ** argv )
 	printf ( "\t Toggle adaptive with the 'a' key\n" );
 	printf ( "\t Click on a particle and drag the mouse to apply force\n" );
 	printf ( "\t Use ',' '.' and '/' to rotate\n" );
-	printf ( "\t Use '1' to '5' to change between solvers:\n" );
+	printf ( "\t Use '1' to '5' to change between solvers\n" );
+    printf ( "\t Use 'h' to start a hair simulation, use 'c' to start a cloth simulation\n" );
 	printf ( "\t 1: Explicit Euler\n" );
 	printf ( "\t 2: Semi explicit Euler\n" );
 	printf ( "\t 3: Implicit Euler\n" );

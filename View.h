@@ -31,7 +31,7 @@ private:
     int initialMx, initialMy;
     int width, height;
     bool dumpFrames;
-    bool drawUtil, drawOthers;
+    bool drawUtil, drawConstraints, drawForces;
     bool isSimulating, adaptive;
     int rotate = 0;
     int N;

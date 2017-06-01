@@ -39,8 +39,8 @@ void keypressCallback(unsigned char k, int x, int y) {
 }
 
 View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawOthers(true), adaptive(false),
-          frameNumber(0), dt(dt), N(N) {
+        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawForces(true),
+          drawConstraints(true), adaptive(false), frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
     glutInitWindowPosition ( 0, 0 );
@@ -55,6 +55,8 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHT0);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
@@ -127,7 +129,10 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             drawUtil = !drawUtil;
             break;
         case 'o':
-            drawOthers = !drawOthers;
+            drawConstraints = !drawConstraints;
+            break;
+        case 'f':
+            drawForces = !drawForces;
             break;
         case ',':
             rotate = 1;
@@ -146,9 +151,13 @@ void View::onKeyPress ( unsigned char key, int x, int y )
                 printf("Adaptive off\n");
             break;
         case '[':
+            printf("wind pressed\n");
             if(windForce) {
-                windForce->toggle();
+                printf("wind already created\n");
+                bool active = windForce->toggle();
+                active ? printf("wind active\n") : printf("wind not active\n");
             } else {
+                printf("wind created\n");
                 windForce = new DirectionalForce(this->sys->particles, Vec3f(5.f, 3.f, 5.f));
                 sys->addForce(windForce);
             }
@@ -260,7 +269,7 @@ void View::onDisplay()
     preDisplay3D ();
 
     if (sys != NULL)
-        sys->draw(drawUtil, drawOthers);
+        sys->draw(drawUtil, drawForces, drawConstraints);
 
     postDisplay ();
 }

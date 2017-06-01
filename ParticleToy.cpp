@@ -42,6 +42,8 @@ int main ( int argc, char ** argv )
     printf ( "\t Toggle global directional force using the  '[' key\n" );
 	printf ( "\t Toggle the wall using the  'w' key\n" );
 	printf ( "\t Toggle adaptive with the 'a' key\n" );
+	printf ( "\t Toggle visibility of forces with the 'f' key\n" );
+	printf ( "\t Toggle visibility of constraints with the 'o' key\n" );
 	printf ( "\t Click on a particle and drag the mouse to apply force\n" );
 	printf ( "\t Use ',' '.' and '/' to rotate\n" );
 	printf ( "\t Use '1' to '5' to change between solvers:\n" );

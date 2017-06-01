@@ -60,10 +60,12 @@ void System::reset() {
 /**
  * Draws the forces
  */
-void System::draw(bool drawUtil, bool drawOthers) {
+void System::draw(bool drawUtil, bool drawForce, bool drawConstraint) {
     drawParticles(drawUtil);
-    if (drawOthers) {
+    if (drawForce) {
         drawForces();
+    }
+    if (drawConstraint){
         drawConstraints();
     }
 }
@@ -129,7 +131,7 @@ float System::getTime() {
 VectorXf System::derivEval() {
     clearForces();
     computeForces();
-    ConstraintSolver::solve(this, 100.0f, 10.0f);
+    ConstraintSolver::solve(this, 10.0f, 10.0f);
     return computeDerivative();
 }
 
@@ -187,41 +189,55 @@ void System::drawParticles(bool drawUtil) {
         for (int zx = 0; zx < dx - 1; zx++) {
             for (int y = 0; y < dy - 1; y++) {
                 int x = zx + y * dx;
-                Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
-                Vec3f d2 = particles[x]->position - particles[x + dx]->position;
-
-                Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
+//                Vec3f d1 = particles[x]->position - particles[x + dx + 1]->position;
+//                Vec3f d2 = particles[x]->position - particles[x + dx]->position;
+//                Vec3f n = -(cross(d1, d2) / norm(cross(d1, d2)));
+                Vec3f nx = getNormalForParticleAtIndex(zx, y, dx, dy);
+                Vec3f nxdx1 = getNormalForParticleAtIndex(zx + 1, y + 1, dx, dy);
+                Vec3f nxdx = getNormalForParticleAtIndex(zx, y + 1, dx, dy);
                 //draw front
-                glNormal3f(n[0], n[1], n[2]);
+//                glNormal3f(n[0], n[1], n[2]);
+                glNormal3f(nx[0], nx[1], nx[2]);
                 glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+                glNormal3f(nxdx1[0], nxdx1[1], nxdx1[2]);
                 glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                            particles[x + dx + 1]->position[2]);
+                glNormal3f(nxdx[0], nxdx[1], nxdx[2]);
                 glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1],
                            particles[x + dx]->position[2]);
                 //draw back
-                glNormal3f(-n[0], -n[1], -n[2]);
+//                glNormal3f(-n[0], -n[1], -n[2]);
+                glNormal3f(-nx[0], -nx[1], -nx[2]);
                 glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+                glNormal3f(-nxdx[0], -nxdx[1], -nxdx[2]);
                 glVertex3f(particles[x + dx]->position[0], particles[x + dx]->position[1],
                            particles[x + dx]->position[2]);
+                glNormal3f(-nxdx1[0], -nxdx1[1], -nxdx1[2]);
                 glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                            particles[x + dx + 1]->position[2]);
 
 
-                d1 = particles[x]->position - particles[x + 1]->position;
-                d2 = particles[x]->position - particles[x + dx + 1]->position;
-
-                n = -(cross(d1, d2) / norm(cross(d1, d2)));
+//                d1 = particles[x]->position - particles[x + 1]->position;
+//                d2 = particles[x]->position - particles[x + dx + 1]->position;
+//                n = -(cross(d1, d2) / norm(cross(d1, d2)));
+                Vec3f nx1 = getNormalForParticleAtIndex(zx + 1, y, dx, dy);
                 //draw front
-                glNormal3f(n[0], n[1], n[2]);
+//                glNormal3f(n[0], n[1], n[2]);
+                glNormal3f(nx[0], nx[1], nx[2]);
                 glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+                glNormal3f(nx1[0], nx1[1], nx1[2]);
                 glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
+                glNormal3f(nxdx1[0], nxdx1[1], nxdx1[2]);
                 glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                            particles[x + dx + 1]->position[2]);
                 //draw back
-                glNormal3f(-n[0], -n[1], -n[2]);
+//                glNormal3f(-n[0], -n[1], -n[2]);
+                glNormal3f(-nx[0], -nx[1], -nx[2]);
                 glVertex3f(particles[x]->position[0], particles[x]->position[1], particles[x]->position[2]);
+                glNormal3f(-nxdx1[0], -nxdx1[1], -nxdx1[2]);
                 glVertex3f(particles[x + dx + 1]->position[0], particles[x + dx + 1]->position[1],
                            particles[x + dx + 1]->position[2]);
+                glNormal3f(-nx1[0], -nx1[1], -nx1[2]);
                 glVertex3f(particles[x + 1]->position[0], particles[x + 1]->position[1], particles[x + 1]->position[2]);
             }
         }
@@ -230,8 +246,21 @@ void System::drawParticles(bool drawUtil) {
     }
 
     if(wallExists) {
-        glColor3f(.5f, .5f, .5f);
+        glColor4f(.5f, .5f, .5f, .5f);
         glBegin(GL_QUADS);
+            glVertex3f(-0.55f, -5.f, -3.f);
+            glVertex3f(-0.55f, 2.f, -3.f);
+            glVertex3f(-0.55f, 2.f, 4.f);
+            glVertex3f(-0.55f, -5.f, 4.f);
+
+            glVertex3f(-0.55f, -5.f, -3.f);
+            glVertex3f(-0.55f, -5.f, 4.f);
+            glVertex3f(-0.55f, 2.f, 4.f);
+            glVertex3f(-0.55f, 2.f, -3.f);
+        glEnd();
+        glColor4f(.5f, .5f, .5f, 1.f);
+        /* GL_LINES version *\
+        glBegin(GL_LINES);
         int numZ = 10;
         int numY = 10;
         for (int i = 0; i < numZ + 1; i++) {
@@ -246,6 +275,7 @@ void System::drawParticles(bool drawUtil) {
                 glVertex3f(-0.55f, -5.f + 7.f * j / numY, 7.f * i / numZ - 3.f);
             }
         }
+        \* end GL_LINES version */
         glEnd();
     }
     for (Particle *p : particles) {
@@ -275,4 +305,34 @@ VectorXf System::checkWallCollision(VectorXf oldState, VectorXf newState) {
 
 
     return newState;
+}
+
+Particle* System::indexParticle(int x, int y, int xdim, int ydim) {
+    if (x < 0) {
+        return particles[0 + xdim * y];
+    } else if (x >= xdim) {
+        return particles[(xdim-1)+xdim * y];
+    } else if (y < 0) {
+        return particles[x + xdim * 0];
+    } else if (y >= ydim) {
+        return particles[x + xdim * (ydim - 1)];
+    } else {
+        return particles[x + xdim * y];
+    }
+}
+
+Vec3f System::getNormalForParticleAtIndex(int x, int y, int xdim, int ydim) {
+    Vec3f sumNormal = {0.f, 0.f, 0.f};
+    Vec3f north = indexParticle(x, y-1, xdim, ydim)->position;
+    Vec3f east = indexParticle(x+1, y, xdim, ydim)->position;
+    Vec3f south = indexParticle(x, y+1, xdim, ydim)->position;
+    Vec3f west = indexParticle(x-1, y, xdim, ydim)->position;
+
+    sumNormal += cross(north, west);
+    sumNormal += cross(west, south);
+    sumNormal += cross(south, east);
+    sumNormal += cross(east, north);
+
+    unitize(sumNormal);
+    return sumNormal;
 }

@@ -27,7 +27,7 @@ public:
     virtual map<int, map<int, float>> jx() = 0;
     virtual MatrixXf jv() = 0;
     void setActive(bool state);
-    void toggle();
+    bool toggle();
 
 };
 

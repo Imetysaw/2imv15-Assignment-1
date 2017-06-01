@@ -7,6 +7,7 @@
 void Force::setActive(bool state) {
     active = state;
 }
-void Force::toggle() {
+bool Force::toggle() {
     active = !active;
+    return active;
 }

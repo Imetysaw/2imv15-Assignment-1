@@ -54,7 +54,9 @@ public:
     void step(bool adaptive);
     void free();
     void reset();
-    void draw(bool drawUtil, bool drawOthers);
+    void draw(bool drawUtil, bool drawForces, bool drawConstraints);
+    Particle* indexParticle(int x, int y, int xdim, int ydim);
+    Vec3f getNormalForParticleAtIndex(int x, int y, int xdim, int ydim);
 };
 
 

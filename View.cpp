@@ -56,7 +56,7 @@ View::View(int width, int height, float dt, SystemBuilder::AvailableSystems syst
     glEnable(GL_LIGHT0);
 
 
-    glDepthFunc(GL_GEQUAL);
+    glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 

@@ -93,7 +93,7 @@ System* SystemBuilder::initCloth() {
         for (int x = 0; x < xSize; x++) {
             sys->addForce(new SpringForce(sys->particles[x + y * xSize],
                                           sys->particles[x + (y + 1) * xSize],
-                                          deltaY, spr, dmp));
+                                          sqrt(pow(deltaY, 2) + pow(deltaY, 2)), spr, dmp));
         }
     }
 
@@ -101,7 +101,7 @@ System* SystemBuilder::initCloth() {
         for (int x = 0; x < xSize - 1; x++) {
             sys->addForce(new SpringForce(sys->particles[x + y * xSize],
                                           sys->particles[x + 1 + (y + 1) * xSize],
-                                          sqrt(pow(deltaX, 2) + pow(deltaY, 2)), spr, dmp));
+                                          sqrt(pow(deltaX, 2) + pow(deltaY, 2) + pow(deltaY, 2)), spr, dmp));
         }
     }
 
@@ -111,7 +111,7 @@ System* SystemBuilder::initCloth() {
         for (int x = 1; x < xSize; x++) {
             sys->addForce(new SpringForce(sys->particles[x + y * xSize],
                                           sys->particles[x - 1 + (y + 1) * xSize],
-                                          sqrt(pow(deltaX, 2) + pow(deltaY, 2)), spr, dmp));
+                                          sqrt(pow(deltaX, 2) + pow(deltaY, 2) + pow(deltaY, 2)), spr, dmp));
         }
     }
 

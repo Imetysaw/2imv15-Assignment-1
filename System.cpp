@@ -301,7 +301,12 @@ VectorXf System::checkWallCollision(VectorXf oldState, VectorXf newState) {
             newState[i * 6] = -0.55f;
         }
     }
-
+    //Check collision with floor
+    for (int i = 0; i < particles.size(); i++) {
+        if(newState[i * 6 + 1]<-2.5f){
+            newState[i * 6 + 1]=-2.5f;
+        }
+    }
 
     return newState;
 }

@@ -160,6 +160,14 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             else
                 printf("Adaptive off\n");
             break;
+        case 'b':
+            sys->springsCanBreak = !sys->springsCanBreak;
+            if (sys->springsCanBreak)
+                printf("Springs can now break\n");
+            else
+                printf("Springs can no longer break\n");
+            break;
+            break;
         case '[':
             printf("wind pressed\n");
             if(windForce) {

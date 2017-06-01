@@ -11,7 +11,7 @@ public:
 
     void draw() override;
     void setTarget(std::vector<Particle*> particles) override;
-    void apply() override;
+    void apply(bool springsCanBreak) override;
     map<int, map<int, float>>  jx() override;
     MatrixXf jv() override;
 private:

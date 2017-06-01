@@ -14,7 +14,7 @@ void DragForce::setTarget(std::vector<Particle*> particles)
     this->particles = particles;
 }
 
-void DragForce::apply()
+void DragForce::apply(bool springsCanBreak)
 {
     if (!active)
         return;

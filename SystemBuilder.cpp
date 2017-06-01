@@ -134,7 +134,7 @@ System* SystemBuilder::initHair() {
 
     const int ySize = 10;
     const float deltaY = 3.0f/ySize;
-    const int numHairs = 1;
+    const int numHairs = 8;
 
 
     for (int k = 0; k < numHairs; k++) {
@@ -157,7 +157,7 @@ System* SystemBuilder::initHair() {
             sys->addForce(new AngularSpringForce(sys->particles[k * ySize + y],
                                                  sys->particles[k * ySize + y + 1],
                                                  sys->particles[k * ySize + y + 2],
-                                                 0, 20.f, dmp));
+                                                 2.5f, 20.f, dmp));
         }
 
         float r = 0.05f;

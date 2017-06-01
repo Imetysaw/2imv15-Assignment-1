@@ -22,27 +22,33 @@ void SpringForce::setTarget(std::vector<Particle*> particles)
     this->particles = particles;
 }
 
-void SpringForce::apply()
+void SpringForce::apply(bool springsCanBreak)
 {
-    Vec3f l = particles[0]->position - particles[1]->position;
-    Vec3f ld = particles[0]->velocity - particles[1]->velocity;
+        Vec3f l = particles[0]->position - particles[1]->position;
+        Vec3f ld = particles[0]->velocity - particles[1]->velocity;
 
-    // Compute spring force
-    // f_a = -[ ks * ( |l| - r ) + kd * ld * l /|l| ] * l / |l|
-    Vec3f result = -(ks * ( norm(l) - dist ) + kd * ((l * ld) / norm(l)) ) * (l / norm(l));
+    if(springsCanBreak && norm(l)>2*dist){
+        active=false;
+    } else if(active){
+        // Compute spring force
+        // f_a = -[ ks * ( |l| - r ) + kd * ld * l /|l| ] * l / |l|
+        Vec3f result = -(ks * (norm(l) - dist) + kd * ((l * ld) / norm(l))) * (l / norm(l));
 
-    particles[0]->force += result;
-    particles[1]->force -= result;
+        particles[0]->force += result;
+        particles[1]->force -= result;
+    }
 }
 
 void SpringForce::draw()
 {
-    float deltaDist = norm(particles[0]->position - particles[1]->position) - dist;
-    glBegin( GL_LINES );
-    glColor3f(0.8f, 0.8f - deltaDist, 0.8f - deltaDist);
-    glVertex3f( particles[0]->position[0], particles[0]->position[1], particles[0]->position[2] );
-    glVertex3f( particles[1]->position[0], particles[1]->position[1], particles[1]->position[2] );
-    glEnd();
+    if(active) {
+        float deltaDist = norm(particles[0]->position - particles[1]->position) - dist;
+        glBegin(GL_LINES);
+        glColor3f(0.8f, 0.8f - deltaDist, 0.8f - deltaDist);
+        glVertex3f(particles[0]->position[0], particles[0]->position[1], particles[0]->position[2]);
+        glVertex3f(particles[1]->position[0], particles[1]->position[1], particles[1]->position[2]);
+        glEnd();
+    }
 }
 
 map<int, map<int, float>>  SpringForce::jx() {

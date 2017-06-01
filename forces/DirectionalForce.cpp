@@ -21,7 +21,7 @@ void DirectionalForce::setTarget(std::vector<Particle*> particles)
     this->particles = particles;
 }
 
-void DirectionalForce::apply()
+void DirectionalForce::apply(bool springsCanBreak)
 {
     if (!active)
         return;

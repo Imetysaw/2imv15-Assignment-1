@@ -135,5 +135,8 @@ void Euler::implicit(System *sys, float h) {
         newState[si + 5] = oldState[si + 5] + dy[i + 2] * h;
     }
 
+    if (sys->wallExists) {
+        newState = sys->checkWallCollision(oldState, newState);
+    }
     sys->setState(newState);
 }

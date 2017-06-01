@@ -178,7 +178,7 @@ VectorXf System::computeDerivative() {
 }
 
 void System::drawParticles(bool drawUtil) {
-    // 12 x 8
+    // 8 x 6
     if(type == SystemBuilder::CLOTH) {
         glEnable(GL_LIGHTING);
         glBegin(GL_TRIANGLES);

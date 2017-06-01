@@ -155,7 +155,7 @@ void System::setState(VectorXf src, float t) {
 
 void System::computeForces() {
     for (Force *f : forces) {
-        f->apply();
+        f->apply(springsCanBreak);
     }
 }
 
@@ -181,7 +181,7 @@ VectorXf System::computeDerivative() {
 
 void System::drawParticles(bool drawUtil) {
     // 8 x 6
-    if(type == SystemBuilder::CLOTH) {
+    if(type == SystemBuilder::CLOTH && !springsCanBreak) {
         glEnable(GL_LIGHTING);
         glBegin(GL_TRIANGLES);
         int dx = 8, dy = 6;

@@ -33,6 +33,7 @@ public:
     std::vector<Constraint*> constraints;
 
     bool wallExists;
+    bool springsCanBreak = false;
     float dt;
     SystemBuilder::AvailableSystems type;
     Solver* solver;

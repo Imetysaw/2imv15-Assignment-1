@@ -15,7 +15,7 @@ public:
     DirectionalForce(std::vector<Particle*> particles, Vec3f direction);
 
     void setTarget(std::vector<Particle*> particles) override;
-    void apply() override;
+    void apply(bool springsCanBreak) override;
     void draw() override;
 
     map<int, map<int, float>> jx() override;

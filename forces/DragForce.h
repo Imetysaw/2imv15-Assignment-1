@@ -15,7 +15,7 @@ public:
     DragForce(std::vector<Particle*> particles, float amount);
 
     void setTarget(std::vector<Particle*> particles) override;
-    void apply() override;
+    void apply(bool springsCanBreak) override;
     void draw() override;
 
     map<int, map<int, float>>  jx() override;

@@ -17,7 +17,7 @@ using namespace Eigen;
 class Solver;
 class System {
 private:
-    void drawParticles(bool drawUtil);
+    void drawParticles(bool drawVelocity, bool drawForce);
     void drawForces();
     void drawConstraints();
 
@@ -55,7 +55,7 @@ public:
     void step(bool adaptive);
     void free();
     void reset();
-    void draw(bool drawUtil, bool drawForces, bool drawConstraints);
+    void draw(bool drawVelocity, bool drawForces, bool drawConstraints);
     Particle* indexParticle(int x, int y, int xdim, int ydim);
     Vec3f getNormalForParticleAtIndex(int x, int y, int xdim, int ydim);
 };

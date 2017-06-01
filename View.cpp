@@ -39,7 +39,7 @@ void keypressCallback(unsigned char k, int x, int y) {
 }
 
 View::View(int width, int height, float dt, SystemBuilder::AvailableSystems system, int N)
-        : width(width), height(height), isSimulating(false), dumpFrames(false), drawUtil(false), drawForces(true),
+        : width(width), height(height), isSimulating(false), dumpFrames(false), drawVelocity(false), drawForces(true),
           drawConstraints(true), adaptive(false), frameNumber(0), dt(dt), N(N) {
     glutInitDisplayMode ( GLUT_RGBA | GLUT_DOUBLE );
 
@@ -135,8 +135,8 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->dt -= 0.001f;
             printf("Decrease dt: %f\n", sys->dt);
             break;
-        case 'p':
-            drawUtil = !drawUtil;
+        case 'v':
+            drawVelocity = !drawVelocity;
             break;
         case 'o':
             drawConstraints = !drawConstraints;
@@ -287,7 +287,7 @@ void View::onDisplay()
     preDisplay3D ();
 
     if (sys != NULL)
-        sys->draw(drawUtil, drawForces, drawConstraints);
+        sys->draw(drawVelocity, drawForces, drawConstraints);
 
     postDisplay ();
 }

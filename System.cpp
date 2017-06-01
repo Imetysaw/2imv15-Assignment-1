@@ -60,8 +60,8 @@ void System::reset() {
 /**
  * Draws the forces
  */
-void System::draw(bool drawUtil, bool drawForce, bool drawConstraint) {
-    drawParticles(drawUtil);
+void System::draw(bool drawVelocity, bool drawForce, bool drawConstraint) {
+    drawParticles(drawVelocity, drawForce);
     if (drawForce) {
         drawForces();
     }
@@ -179,12 +179,12 @@ VectorXf System::computeDerivative() {
     return dst;
 }
 
-void System::drawParticles(bool drawUtil) {
-    // 8 x 6
-    if(type == SystemBuilder::CLOTH && !springsCanBreak) {
+void System::drawParticles(bool drawVelocity, bool drawForce) {
+    // 8 x 10
+    if(type == SystemBuilder::CLOTH && !drawForce && !springsCanBreak) {
         glEnable(GL_LIGHTING);
         glBegin(GL_TRIANGLES);
-        int dx = 8, dy = 6;
+        int dx = 8, dy = 10;
         glColor3f(0.4f, 0.7f, 0.5f);
         for (int zx = 0; zx < dx - 1; zx++) {
             for (int y = 0; y < dy - 1; y++) {
@@ -245,17 +245,32 @@ void System::drawParticles(bool drawUtil) {
         glDisable(GL_LIGHTING);
     }
     if(wallExists) {
-        glColor4f(.5f, .5f, .5f, .5f);
         glBegin(GL_QUADS);
-            glVertex3f(-0.55f, -5.f, -3.f);
-            glVertex3f(-0.55f, 2.f, -3.f);
-            glVertex3f(-0.55f, 2.f, 4.f);
-            glVertex3f(-0.55f, -5.f, 4.f);
+            glColor4f(.5f, 0.f, .5f, .5f);
+            // wall
+            glVertex3f(-0.56f, -2.51f, -3.f);
+            glVertex3f(-0.56f,    2.f, -3.f);
+            glVertex3f(-0.56f,    2.f,  4.f);
+            glVertex3f(-0.56f, -2.51f,  4.f);
 
-            glVertex3f(-0.55f, -5.f, -3.f);
-            glVertex3f(-0.55f, -5.f, 4.f);
-            glVertex3f(-0.55f, 2.f, 4.f);
-            glVertex3f(-0.55f, 2.f, -3.f);
+            glVertex3f(-0.56f, -2.51f,-3.f);
+            glVertex3f(-0.56f, -2.51f, 4.f);
+            glVertex3f(-0.56f,    2.f, 4.f);
+            glVertex3f(-0.56f,    2.f,-3.f);
+
+
+            glColor4f(.7f, .4f, 0.f, .5f);
+            //floor
+            glVertex3f(-0.56f,-2.51f,-3.f);
+            glVertex3f(   5.f,-2.51f,-3.f);
+            glVertex3f(   5.f,-2.51f, 4.f);
+            glVertex3f(-0.56f,-2.51f, 4.f);
+
+            glVertex3f(-0.56f,-2.51f,-3.f);
+            glVertex3f(-0.56f,-2.51f, 4.f);
+            glVertex3f(   5.f,-2.51f, 4.f);
+            glVertex3f(   5.f,-2.51f,-3.f);
+
         glEnd();
         glColor4f(.5f, .5f, .5f, 1.f);
         /* GL_LINES version *\
@@ -274,11 +289,11 @@ void System::drawParticles(bool drawUtil) {
                 glVertex3f(-0.55f, -5.f + 7.f * j / numY, 7.f * i / numZ - 3.f);
             }
         }
-        \* end GL_LINES version */
         glEnd();
+        \* end GL_LINES version */
     }
     for (Particle *p : particles) {
-        p->draw(drawUtil);
+        p->draw(drawVelocity, drawForce);
     }
 }
 

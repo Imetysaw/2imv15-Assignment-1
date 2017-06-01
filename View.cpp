@@ -93,6 +93,16 @@ void View::onKeyPress ( unsigned char key, int x, int y )
             sys->free ();
             exit ( 0 );
             break;
+        case 'h': {
+            sys = SystemBuilder::get(SystemBuilder::HAIR);
+            sys->type = SystemBuilder::HAIR;
+            break;
+        }
+        case 'c': {
+            sys = SystemBuilder::get(SystemBuilder::CLOTH);
+            sys->type = SystemBuilder::CLOTH;
+            break;
+        }
         case '1':
             printf("Using Explicit Euler\n");
             sys->solver = new Euler(Euler::EXPLICIT);

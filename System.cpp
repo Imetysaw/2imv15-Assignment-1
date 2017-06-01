@@ -181,7 +181,7 @@ VectorXf System::computeDerivative() {
 
 void System::drawParticles(bool drawUtil) {
     // 8 x 6
-    if (type == SystemBuilder::CLOTH) {
+    if(type == SystemBuilder::CLOTH) {
         glEnable(GL_LIGHTING);
         glBegin(GL_TRIANGLES);
         int dx = 8, dy = 6;
@@ -244,7 +244,6 @@ void System::drawParticles(bool drawUtil) {
         glEnd();
         glDisable(GL_LIGHTING);
     }
-
     if(wallExists) {
         glColor4f(.5f, .5f, .5f, .5f);
         glBegin(GL_QUADS);

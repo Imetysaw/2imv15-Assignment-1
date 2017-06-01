@@ -131,7 +131,7 @@ float System::getTime() {
 VectorXf System::derivEval() {
     clearForces();
     computeForces();
-    ConstraintSolver::solve(this, 10.0f, 10.0f);
+    ConstraintSolver::solve(this, 100.0f, 10.0f);
     return computeDerivative();
 }
 

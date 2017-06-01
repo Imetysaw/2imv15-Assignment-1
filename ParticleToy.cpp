@@ -50,7 +50,7 @@ int main ( int argc, char ** argv )
 	printf ( "\t Use '1' to '5' to change between solvers\n" );
     printf ( "\t Use 'h' to start a hair simulation, use 'c' to start a cloth simulation\n" );
 	printf ( "\t 1: Explicit Euler\n" );
-	printf ( "\t 2: Semi explicit Euler\n" );
+	printf ( "\t 2: Semi implicit Euler\n" );
 	printf ( "\t 3: Implicit Euler\n" );
 	printf ( "\t 4: Midpoint\n" );
 	printf ( "\t 5: 4th order Runge-Kutta\n" );

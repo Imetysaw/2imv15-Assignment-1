@@ -4,6 +4,11 @@
 
 #include "DirectionalForce.h"
 
+#if defined(__CYGWIN__) || defined(WIN32)
+    #include <GL/glut.h>
+#else
+    #include <GLUT/glut.h>
+#endif
 using namespace Eigen;
 
 DirectionalForce::DirectionalForce(std::vector<Particle*> particles, Vec3f direction) : direction(direction)
@@ -27,7 +32,16 @@ void DirectionalForce::apply()
 
 void DirectionalForce::draw()
 {
-
+    if (active) {
+        glColor3f(.8f, .5f, 0.f);
+        glBegin(GL_LINES);
+        Vec3f normDirection = direction / norm(direction);
+        for (Particle *p : particles) {
+            glVertex3f(p->position[0], p->position[1], p->position[2]);
+            glVertex3f(p->position[0] + normDirection[0], p->position[1] + normDirection[1], p->position[2] + normDirection[2]);
+        }
+        glEnd();
+    }
 }
 
 map<int, map<int, float>> DirectionalForce::jx() {

@@ -184,7 +184,7 @@ void System::drawParticles(bool drawVelocity, bool drawForce) {
     if(type == SystemBuilder::CLOTH && !drawForce && !springsCanBreak) {
         glEnable(GL_LIGHTING);
         glBegin(GL_TRIANGLES);
-        int dx = 8, dy = 10;
+        int dx = 3, dy = 3;
         glColor3f(0.4f, 0.7f, 0.5f);
         for (int zx = 0; zx < dx - 1; zx++) {
             for (int y = 0; y < dy - 1; y++) {

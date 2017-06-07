@@ -63,7 +63,7 @@ System* SystemBuilder::initBasic()
 System* SystemBuilder::initCloth() {
     System* sys = new System(new Euler(Euler::SEMI));
 
-    const int xSize = 8, ySize = 10;
+    const int xSize = 3, ySize = 3;
     const float deltaX = 2.0f/xSize, deltaY = 2.5f/ySize;
     int pindex = 0;
     // Initialize particles

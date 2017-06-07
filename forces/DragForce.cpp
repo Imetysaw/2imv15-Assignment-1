@@ -16,8 +16,6 @@ void DragForce::setTarget(std::vector<Particle*> particles)
 
 void DragForce::apply(bool springsCanBreak)
 {
-    if (!active)
-        return;
     for (Particle* p : particles) {
         p->force -= p->velocity * amount;
     }

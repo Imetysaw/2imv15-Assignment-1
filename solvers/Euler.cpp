@@ -3,7 +3,7 @@
 //
 
 #include "Euler.h"
-#include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <Eigen/IterativeLinearSolvers>
 
 using namespace Eigen;
@@ -54,23 +54,27 @@ void Euler::simulateStep(System *system, float h) {
 void Euler::implicit(System *sys, float h) {
     // Get old state
     VectorXf oldState = sys->getState();
+    sys->derivEval();
 
     // Fill mass matrix
-    MatrixXf M = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
+    SparseMatrix<float> M(sys->getDim() / 2, sys->getDim() / 2);
 
+    std::vector<Triplet<float>> MtripletList;
+    MtripletList.reserve(sys->getDim() / 2);
     for (int i = 0; i < sys->particles.size() * 3; i += 3) {
-        M(i + 0, i + 0) = sys->particles[i / 3]->mass;
-        M(i + 1, i + 1) = sys->particles[i / 3]->mass;
-        M(i + 2, i + 2) = sys->particles[i / 3]->mass;
+        MtripletList.push_back(Triplet<float>(i+0, i+0, sys->particles[i / 3]->mass));
+        MtripletList.push_back(Triplet<float>(i+1, i+1, sys->particles[i / 3]->mass));
+        MtripletList.push_back(Triplet<float>(i+2, i+2, sys->particles[i / 3]->mass));
     }
+    M.setFromTriplets(MtripletList.begin(), MtripletList.end());
 
     // Fill jx and jy matrix based
-    MatrixXf jx = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
-    MatrixXf jv = MatrixXf::Zero(sys->getDim() / 2, sys->getDim() / 2);
+    SparseMatrix<float> jx(sys->getDim() / 2, sys->getDim() / 2);
+    MatrixXf jv(sys->getDim() / 2, sys->getDim() / 2);
 
     // Initialize empty map to compute jx
     auto jxm = map<int, map<int, float>>();
-
+    unsigned long entries = 0;
     for (Force *f : sys->forces) {
         // Compute map for every force and update jxm appropriately
         auto fjx = f->jx();
@@ -85,10 +89,10 @@ void Euler::implicit(System *sys, float h) {
                     // No value yet exists, since i1 or i2 does not exist
                     // Hence we set a new value
                     jxm[i1.first][i2.first] = i2.second;
+                    entries++;
                 }
             }
         }
-
 
         if (f->particles.size() == 2) {
             MatrixXf fjv = f->jv();
@@ -97,28 +101,38 @@ void Euler::implicit(System *sys, float h) {
         }
     }
 
+    std::vector<Triplet<float>> JxTripletList;
+    JxTripletList.reserve(entries);
+    for (auto const &i1 : jxm) {
+        for (auto const &i2 : i1.second) {
+            JxTripletList.push_back(Triplet<float>(i1.first, i2.first, i2.second));
+        }
+    }
+    jx.setFromTriplets(JxTripletList.begin(), JxTripletList.end());
+
     // Get fold and vold
-    sys->derivEval();
-    VectorXf fold = VectorXf::Zero(sys->getDim() / 2);
-    VectorXf vold = VectorXf::Zero(sys->getDim() / 2);
+    SparseVector<float> fold(sys->getDim() / 2);
+    SparseVector<float> vold(sys->getDim() / 2);
+
+
     for (int i = 0; i < sys->particles.size(); i++) {
         Particle *p = sys->particles[i];
-        vold[i * 3 + 0] = p->velocity[0];
-        vold[i * 3 + 1] = p->velocity[1];
-        vold[i * 3 + 2] = p->velocity[2];
-        fold[i * 3 + 0] = p->force[0];
-        fold[i * 3 + 1] = p->force[1];
-        fold[i * 3 + 2] = p->force[2];
+        vold.coeffRef(i * 3 + 0) = p->velocity[0];
+        vold.coeffRef(i * 3 + 1) = p->velocity[1];
+        vold.coeffRef(i * 3 + 2) = p->velocity[2];
+        fold.coeffRef(i * 3 + 0) = p->force[0];
+        fold.coeffRef(i * 3 + 1) = p->force[1];
+        fold.coeffRef(i * 3 + 2) = p->force[2];
     }
 
     // Compute A
-    MatrixXf A = M - h * h * jx;// - h * jv;
-    VectorXf b = h * (fold + h * jx * vold);
+    SparseMatrix<float> A = M - h * h * jx;// - h * jv;
+    SparseVector<float> b = h * (fold + h * jx * vold);
 
     // Solve for dy
-    ConjugateGradient<MatrixXf, Lower|Upper> cg;
+    ConjugateGradient<SparseMatrix<float>, Lower|Upper> cg;
     cg.compute(A);
-    VectorXf dy = cg.solve(b);
+    SparseVector<float> dy = cg.solve(b);
 
 //    std::cout << "#iterations:     " << cg.iterations() << std::endl;
 //    std::cout << "estimated error: " << cg.error()      << std::endl;
@@ -127,12 +141,12 @@ void Euler::implicit(System *sys, float h) {
     VectorXf newState(sys->getDim());
     for (int i = 0; i < dy.size(); i += 3) {
         int si = i * 2; // State index
-        newState[si + 0] = oldState[si + 0] + (oldState[si + 3] + dy[i + 0]) * h;    // dX = (V0 + dV) * h
-        newState[si + 1] = oldState[si + 1] + (oldState[si + 4] + dy[i + 1]) * h;
-        newState[si + 2] = oldState[si + 2] + (oldState[si + 5] + dy[i + 2]) * h;
-        newState[si + 3] = oldState[si + 3] + dy[i + 0] * h;        // Update velocity
-        newState[si + 4] = oldState[si + 4] + dy[i + 1] * h;
-        newState[si + 5] = oldState[si + 5] + dy[i + 2] * h;
+        newState[si + 0] = oldState[si + 0] + (oldState[si + 3] + dy.coeff(i+0)) * h;    // dX = (V0 + dV) * h
+        newState[si + 1] = oldState[si + 1] + (oldState[si + 4] + dy.coeff(i+1)) * h;
+        newState[si + 2] = oldState[si + 2] + (oldState[si + 5] + dy.coeff(i+2)) * h;
+        newState[si + 3] = oldState[si + 3] + dy.coeff(i+0);// * h;        // Update velocity
+        newState[si + 4] = oldState[si + 4] + dy.coeff(i+1);// * h;
+        newState[si + 5] = oldState[si + 5] + dy.coeff(i+2);// * h;
     }
 
     if (sys->wallExists) {

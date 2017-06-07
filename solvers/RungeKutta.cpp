@@ -39,6 +39,7 @@ void RungeKutta::simulateStep(System *system, float h) {
     if(system->wallExists) {
         newState = system->checkWallCollision(oldState, newState);
     }
+
     // Set the final state
     system->setState(newState, oldTime + h);
 }

@@ -88,13 +88,10 @@ void ConstraintSolver::solve(System *s, float Ks, float Kd) {
 
     // Initialize CG method
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
-//    cg.setTolerance(0.001f);
 
     // Compute lambda
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(rhs);
-//    printf("Iterations: %i\n", cg.iterations());
-//    printf("Error: %d\n", cg.error());
 
     VectorXf Qh = J.transpose() * lambda;
     for (int i = 0; i < particles.size(); i++) {
